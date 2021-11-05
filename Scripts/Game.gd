@@ -21,9 +21,14 @@ func _ready() -> void:
 	randomize()
 	create_world(randi())
 
-func create_world(rnd_seed : int):
+func _unhandled_key_input(event : InputEventKey) -> void:
+	if "dev" in Globals.BUILD and event.scancode == KEY_F1 and event.pressed:
+		create_world(randi())
+
+func create_world(rnd_seed : int) -> void:
 	game_seed = rnd_seed
 	seed(game_seed)
+	Globals.emit_signal("update_seed", game_seed)
 	randomize()
 	
 	for y in Globals.world_size.y:
