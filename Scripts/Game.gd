@@ -1,7 +1,5 @@
 extends Node
 
-export(Vector2) var world_size
-
 export(Dictionary) var worldgen_parameters = {
 	"CHANCE_GRASS" : 0.475,
 	"CHANCE_FLOWER" : 0.625,
@@ -16,20 +14,20 @@ var tileset : TileSet
 
 var game_seed : int
 
-func _ready():
+func _ready() -> void:
 	tilemap = $World/TileMap
 	tileset = tilemap.tile_set
 	
 	randomize()
 	create_world(randi())
 
-func create_world(rnd_seed):
+func create_world(rnd_seed : int):
 	game_seed = rnd_seed
 	seed(game_seed)
 	randomize()
 	
-	for y in world_size.y:
-		for x in world_size.x:
+	for y in Globals.world_size.y:
+		for x in Globals.world_size.x:
 			var i = randf()
 			
 			if i < worldgen_parameters["CHANCE_GRASS"]:
