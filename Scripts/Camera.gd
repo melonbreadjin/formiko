@@ -22,7 +22,7 @@ func _process(delta : float) -> void:
 	)
 	move_direction = move_direction.normalized()
 	
-	position += move_direction * Globals.CAMERA_MOVESPEED * Globals.BLOCK_SIZE * delta
+	position += move_direction / zoom.x * Globals.CAMERA_MOVESPEED * Globals.BLOCK_SIZE * delta
 	position.x = clamp(position.x, limit_left, limit_right - get_viewport().size.x)
 	position.y = clamp(position.y, limit_top, limit_bottom - get_viewport().size.y)
 	

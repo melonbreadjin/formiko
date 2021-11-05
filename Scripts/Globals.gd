@@ -9,4 +9,4 @@ const CAMERA_ZOOM_EXTENTS_MAX = 1.5
 
 signal update_seed(rnd_seed)
 
-var world_size : Vector2 = Vector2(10, 5)
+var world_size : Vector2 = Vector2(16, 16)
