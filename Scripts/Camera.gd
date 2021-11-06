@@ -34,12 +34,14 @@ func _process(delta : float) -> void:
 	)
 	move_direction = (move_direction - drag_direction).normalized()
 	
-	position += move_direction / zoom.x * Globals.CAMERA_MOVESPEED * Globals.BLOCK_SIZE * delta * (Globals.CAMERA_DRAGSPEED if is_camera_dragging else 1.0)
-	position.x = clamp(position.x, limit_left, limit_right - get_viewport().size.x)
-	position.y = clamp(position.y, limit_top, limit_bottom - get_viewport().size.y)
-	drag_direction = Vector2.ZERO
-	
 	zoom += zoom_direction * Globals.CAMERA_ZOOMSPEED * delta
 	zoom.x = clamp(zoom.x, Globals.CAMERA_ZOOM_EXTENTS_MIN, Globals.CAMERA_ZOOM_EXTENTS_MAX)
 	zoom.y = clamp(zoom.y, Globals.CAMERA_ZOOM_EXTENTS_MIN, Globals.CAMERA_ZOOM_EXTENTS_MAX)
 	zoom_direction = Vector2.ZERO
+	
+	position += move_direction / zoom.x * Globals.CAMERA_MOVESPEED * Globals.BLOCK_SIZE * delta * (Globals.CAMERA_DRAGSPEED if is_camera_dragging else 1.0)
+	position.x = clamp(position.x, limit_left, limit_right - get_viewport().size.x * zoom.x)
+	position.y = clamp(position.y, limit_top, limit_bottom - get_viewport().size.y * zoom.y)
+	drag_direction = Vector2.ZERO
+	
+	Globals.emit_signal("highlight_tile", get_local_mouse_position(), position, zoom)

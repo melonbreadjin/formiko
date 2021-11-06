@@ -2,13 +2,25 @@ extends Node
 
 const BUILD = "0.0.1dev"
 
-const BLOCK_SIZE = 128.0
-const CAMERA_MOVESPEED = 5.0
-const CAMERA_DRAGSPEED = 2.0
-const CAMERA_ZOOMSPEED = 4.0
-const CAMERA_ZOOM_EXTENTS_MIN = 0.75
-const CAMERA_ZOOM_EXTENTS_MAX = 1.5
+const BLOCK_SIZE : float = 128.0
+const CAMERA_MOVESPEED : float = 5.0
+const CAMERA_DRAGSPEED : float = 2.0
+const CAMERA_ZOOMSPEED : float = 4.0
+const CAMERA_ZOOM_EXTENTS_MIN : float = 0.75
+const CAMERA_ZOOM_EXTENTS_MAX : float = 1.5
 
+enum unit_type{
+	ANT_WORKER,
+	ANT_SOLDIER,
+	ANT_QUEEN
+}
+
+signal highlight_tile(pos, off, zoom)
 signal update_seed(rnd_seed)
 
 var world_size : Vector2 = Vector2(16, 16)
+var starting_units : Dictionary = {
+	unit_type.ANT_WORKER : 10,
+	unit_type.ANT_SOLDIER : 1,
+	unit_type.ANT_QUEEN : 1
+}

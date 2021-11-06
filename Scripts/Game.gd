@@ -21,6 +21,13 @@ func _ready() -> void:
 	randomize()
 	create_world(randi())
 
+func _unhandled_input(event : InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		var mouse_position : Vector2 = event.position
+		
+		Globals.emit_signal("highlight_tile", mouse_position, $Camera.position, $Camera.zoom)
+		print(tilemap.world_to_map((mouse_position * $Camera.zoom + $Camera.position) / tilemap.scale))
+
 func _unhandled_key_input(event : InputEventKey) -> void:
 	if "dev" in Globals.BUILD and event.scancode == KEY_F1 and event.pressed:
 		create_world(randi())

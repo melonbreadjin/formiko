@@ -163,6 +163,15 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="TileHighlight" type="Panel" parent="CanvasLayer"]
+modulate = Color( 1, 1, 1, 0.454902 )
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="World" type="Node" parent="."]
 
 [node name="TileMap" type="TileMap" parent="World"]
