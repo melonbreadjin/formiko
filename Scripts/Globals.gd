@@ -9,6 +9,12 @@ const CAMERA_ZOOMSPEED : float = 4.0
 const CAMERA_ZOOM_EXTENTS_MIN : float = 0.75
 const CAMERA_ZOOM_EXTENTS_MAX : float = 1.5
 
+const unit_names : Array = [
+	"Worker Ant",
+	"Soldier Ant",
+	"Queen Ant"
+]
+
 enum unit_type{
 	ANT_WORKER,
 	ANT_SOLDIER,
@@ -19,6 +25,10 @@ signal highlight_tile(pos, off, zoom)
 signal update_seed(rnd_seed)
 
 var world_size : Vector2 = Vector2(16, 16)
+
+var player_count : int = 1
+var bot_count : int = 1
+
 var starting_units : Dictionary = {
 	unit_type.ANT_WORKER : 10,
 	unit_type.ANT_SOLDIER : 1,

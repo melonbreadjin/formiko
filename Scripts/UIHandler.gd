@@ -10,6 +10,12 @@ func on_update_seed(rnd_seed) -> void:
 	$SeedLabel.text = "Seed: %d" % rnd_seed
 
 func on_highlight_tile(pos, off, zoom) -> void:
+	if pos == null:
+		$TileHighlight.visible = false
+		return
+	else:
+		$TileHighlight.visible = true
+	
 	$TileHighlight.rect_position = Vector2(
 		Globals.BLOCK_SIZE / zoom.x * floor((pos.x * zoom.x + fmod(off.x * zoom.x, Globals.BLOCK_SIZE * zoom.x)) / Globals.BLOCK_SIZE / zoom.x) - fmod(off.x / zoom.x, Globals.BLOCK_SIZE / zoom.x),
 		Globals.BLOCK_SIZE / zoom.y * floor((pos.y * zoom.y + fmod(off.y * zoom.y, Globals.BLOCK_SIZE * zoom.y)) / Globals.BLOCK_SIZE / zoom.y) - fmod(off.y / zoom.y, Globals.BLOCK_SIZE / zoom.y)

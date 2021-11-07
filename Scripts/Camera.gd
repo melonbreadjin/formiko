@@ -20,6 +20,7 @@ func _unhandled_input(event : InputEvent) -> void:
 			is_camera_dragging = false
 	
 	if event is InputEventMouseMotion and is_camera_dragging:
+		Globals.emit_signal("highlight_tile", null, null, null)
 		drag_direction = event.relative.normalized()
 	
 	if event.is_action_pressed("ui_zoom_in"):

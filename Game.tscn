@@ -180,6 +180,9 @@ tile_set = SubResource( 1 )
 cell_size = Vector2( 16, 16 )
 format = 1
 
+[node name="Entities" type="Node2D" parent="World"]
+z_index = 10
+
 [node name="Camera" type="Camera2D" parent="."]
 anchor_mode = 0
 current = true
