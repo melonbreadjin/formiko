@@ -15,6 +15,8 @@ func on_highlight_tile(pos, off, zoom) -> void:
 	if pos == null:
 		$TileHighlight.visible = false
 		return
+	elif is_sidebar_active:
+		return
 	else:
 		$TileHighlight.visible = true
 	

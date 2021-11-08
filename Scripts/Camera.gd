@@ -6,6 +6,10 @@ var zoom_direction : Vector2
 
 var is_camera_dragging : bool = false
 
+var mouse_pre_drag : Vector2
+var mouse_post_drag : Vector2
+var mouse_drag_delta : Vector2
+
 func _ready() -> void:
 	limit_top = 0
 	limit_left = 0
@@ -16,8 +20,11 @@ func _unhandled_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
 		if event.pressed:
 			is_camera_dragging = true
+			mouse_pre_drag = event.position
 		else:
 			is_camera_dragging = false
+			mouse_post_drag = event.position
+			mouse_drag_delta = mouse_post_drag - mouse_pre_drag
 	
 	if event is InputEventMouseMotion and is_camera_dragging:
 		Globals.emit_signal("highlight_tile", null, null, null)
