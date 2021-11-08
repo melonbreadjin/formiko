@@ -1,9 +1,17 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/Game.gd" type="Script" id=1]
 [ext_resource path="res://Assets/tilemap.png" type="Texture" id=2]
 [ext_resource path="res://Scripts/Camera.gd" type="Script" id=3]
 [ext_resource path="res://Scripts/UIHandler.gd" type="Script" id=4]
+
+[sub_resource type="AtlasTexture" id=3]
+atlas = ExtResource( 2 )
+region = Rect2( 0, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=2]
+atlas = ExtResource( 2 )
+region = Rect2( 0, 0, 16, 16 )
 
 [sub_resource type="TileSet" id=1]
 0/name = "grass_1"
@@ -171,6 +179,210 @@ mouse_filter = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Sidebar" type="Control" parent="CanvasLayer"]
+visible = false
+anchor_left = 0.6
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="CanvasLayer/Sidebar"]
+modulate = Color( 1, 1, 1, 0.792157 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Container" type="VBoxContainer" parent="CanvasLayer/Sidebar/Panel"]
+margin_left = 32.0
+margin_top = 32.0
+margin_right = 368.0
+margin_bottom = 568.0
+custom_constants/separation = 32
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TileInfo" type="HBoxContainer" parent="CanvasLayer/Sidebar/Panel/Container"]
+margin_right = 340.0
+margin_bottom = 64.0
+custom_constants/separation = 64
+
+[node name="TileImage" type="TextureRect" parent="CanvasLayer/Sidebar/Panel/Container/TileInfo"]
+margin_right = 64.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
+texture = SubResource( 3 )
+stretch_mode = 1
+
+[node name="TileNameLabel" type="Label" parent="CanvasLayer/Sidebar/Panel/Container/TileInfo"]
+margin_left = 128.0
+margin_top = 25.0
+margin_right = 196.0
+margin_bottom = 39.0
+text = "TILE NAME"
+
+[node name="YieldInfo" type="HBoxContainer" parent="CanvasLayer/Sidebar/Panel/Container"]
+margin_top = 96.0
+margin_right = 340.0
+margin_bottom = 110.0
+custom_constants/separation = 64
+
+[node name="YieldTextLabel" type="Label" parent="CanvasLayer/Sidebar/Panel/Container/YieldInfo"]
+margin_right = 63.0
+margin_bottom = 14.0
+text = "YIELDS:    "
+
+[node name="YieldLabel" type="Label" parent="CanvasLayer/Sidebar/Panel/Container/YieldInfo"]
+margin_left = 127.0
+margin_right = 221.0
+margin_bottom = 14.0
+text = "x food per turn"
+
+[node name="UnitInfo" type="HBoxContainer" parent="CanvasLayer/Sidebar/Panel/Container"]
+margin_top = 142.0
+margin_right = 340.0
+margin_bottom = 156.0
+custom_constants/separation = 64
+
+[node name="UnitTextLabel" type="Label" parent="CanvasLayer/Sidebar/Panel/Container/UnitInfo"]
+margin_right = 43.0
+margin_bottom = 14.0
+text = "UNITS:"
+
+[node name="UnitDetails" type="GridContainer" parent="CanvasLayer/Sidebar/Panel/Container"]
+margin_top = 188.0
+margin_right = 340.0
+margin_bottom = 540.0
+custom_constants/vseparation = 32
+custom_constants/hseparation = 28
+columns = 4
+
+[node name="TileImage" type="TextureRect" parent="CanvasLayer/Sidebar/Panel/Container/UnitDetails"]
+margin_right = 64.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
+texture = SubResource( 2 )
+stretch_mode = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TileImage2" type="TextureRect" parent="CanvasLayer/Sidebar/Panel/Container/UnitDetails"]
+margin_left = 92.0
+margin_right = 156.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
+texture = SubResource( 2 )
+stretch_mode = 1
+
+[node name="TileImage3" type="TextureRect" parent="CanvasLayer/Sidebar/Panel/Container/UnitDetails"]
+margin_left = 184.0
+margin_right = 248.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
+texture = SubResource( 2 )
+stretch_mode = 1
+
+[node name="TileImage4" type="TextureRect" parent="CanvasLayer/Sidebar/Panel/Container/UnitDetails"]
+margin_left = 276.0
+margin_right = 340.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
+texture = SubResource( 2 )
+stretch_mode = 1
+
+[node name="TileImage5" type="TextureRect" parent="CanvasLayer/Sidebar/Panel/Container/UnitDetails"]
+margin_top = 96.0
+margin_right = 64.0
+margin_bottom = 160.0
+rect_min_size = Vector2( 64, 64 )
+texture = SubResource( 2 )
+stretch_mode = 1
+
+[node name="TileImage6" type="TextureRect" parent="CanvasLayer/Sidebar/Panel/Container/UnitDetails"]
+margin_left = 92.0
+margin_top = 96.0
+margin_right = 156.0
+margin_bottom = 160.0
+rect_min_size = Vector2( 64, 64 )
+texture = SubResource( 2 )
+stretch_mode = 1
+
+[node name="TileImage7" type="TextureRect" parent="CanvasLayer/Sidebar/Panel/Container/UnitDetails"]
+margin_left = 184.0
+margin_top = 96.0
+margin_right = 248.0
+margin_bottom = 160.0
+rect_min_size = Vector2( 64, 64 )
+texture = SubResource( 2 )
+stretch_mode = 1
+
+[node name="TileImage8" type="TextureRect" parent="CanvasLayer/Sidebar/Panel/Container/UnitDetails"]
+margin_left = 276.0
+margin_top = 96.0
+margin_right = 340.0
+margin_bottom = 160.0
+rect_min_size = Vector2( 64, 64 )
+texture = SubResource( 2 )
+stretch_mode = 1
+
+[node name="TileImage9" type="TextureRect" parent="CanvasLayer/Sidebar/Panel/Container/UnitDetails"]
+margin_top = 192.0
+margin_right = 64.0
+margin_bottom = 256.0
+rect_min_size = Vector2( 64, 64 )
+texture = SubResource( 2 )
+stretch_mode = 1
+
+[node name="TileImage10" type="TextureRect" parent="CanvasLayer/Sidebar/Panel/Container/UnitDetails"]
+margin_left = 92.0
+margin_top = 192.0
+margin_right = 156.0
+margin_bottom = 256.0
+rect_min_size = Vector2( 64, 64 )
+texture = SubResource( 2 )
+stretch_mode = 1
+
+[node name="TileImage11" type="TextureRect" parent="CanvasLayer/Sidebar/Panel/Container/UnitDetails"]
+margin_left = 184.0
+margin_top = 192.0
+margin_right = 248.0
+margin_bottom = 256.0
+rect_min_size = Vector2( 64, 64 )
+texture = SubResource( 2 )
+stretch_mode = 1
+
+[node name="TileImage12" type="TextureRect" parent="CanvasLayer/Sidebar/Panel/Container/UnitDetails"]
+margin_left = 276.0
+margin_top = 192.0
+margin_right = 340.0
+margin_bottom = 256.0
+rect_min_size = Vector2( 64, 64 )
+texture = SubResource( 2 )
+stretch_mode = 1
+
+[node name="TileImage13" type="TextureRect" parent="CanvasLayer/Sidebar/Panel/Container/UnitDetails"]
+margin_top = 288.0
+margin_right = 64.0
+margin_bottom = 352.0
+rect_min_size = Vector2( 64, 64 )
+texture = SubResource( 2 )
+stretch_mode = 1
+
+[node name="TileImage14" type="TextureRect" parent="CanvasLayer/Sidebar/Panel/Container/UnitDetails"]
+margin_left = 92.0
+margin_top = 288.0
+margin_right = 156.0
+margin_bottom = 352.0
+rect_min_size = Vector2( 64, 64 )
+texture = SubResource( 2 )
+stretch_mode = 1
 
 [node name="World" type="Node" parent="."]
 

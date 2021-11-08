@@ -96,7 +96,11 @@ func _unhandled_input(event : InputEvent) -> void:
 		var mouse_position : Vector2 = event.position
 		
 		if not event.pressed and event.button_index == BUTTON_LEFT:
-			print(tilemap.world_to_map((mouse_position * $Camera.zoom + $Camera.position) / tilemap.scale))
+			Globals.emit_signal("toggle_sidebar", {
+				"tilemap_position" : tilemap.world_to_map((mouse_position * $Camera.zoom + $Camera.position) / tilemap.scale),
+				"tile_name" : tileset.tile_get_name(tilemap.get_cellv(tilemap.world_to_map((mouse_position * $Camera.zoom + $Camera.position) / tilemap.scale))),
+				"tile_region" : tileset.tile_get_region(tilemap.get_cellv(tilemap.world_to_map((mouse_position * $Camera.zoom + $Camera.position) / tilemap.scale)))
+			})
 
 func _unhandled_key_input(event : InputEventKey) -> void:
 	if "dev" in Globals.BUILD and event.scancode == KEY_F1 and event.pressed:
