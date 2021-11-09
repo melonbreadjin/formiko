@@ -20,9 +20,13 @@ var game_seed : int
 var active_player : int
 var player_count : int
 
+var _sgn
+
 func _ready() -> void:
 	tilemap = $World/TileMap
 	tileset = tilemap.tile_set
+	
+	_sgn = Globals.connect("end_turn", self, "on_end_turn")
 	
 	randomize()
 	new_game()
@@ -128,4 +132,7 @@ func create_world(rnd_seed : int) -> void:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("sand"))
 			elif i < worldgen_parameters["CHANCE_PUDDLE"]:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("puddle"))
-	
+
+func on_end_turn() -> void:
+	active_player = (active_player + 1) % player_count
+	Globals.emit_signal("update_turn", players[active_player][0])

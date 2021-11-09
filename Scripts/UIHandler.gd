@@ -7,6 +7,7 @@ func _ready() -> void:
 	_sgn = Globals.connect("update_seed", self, "on_update_seed")
 	_sgn = Globals.connect("highlight_tile", self, "on_highlight_tile")
 	_sgn = Globals.connect("toggle_sidebar", self, "on_toggle_sidebar")
+	_sgn = Globals.connect("update_turn", self, "on_update_turn")
 
 func on_update_seed(rnd_seed) -> void:
 	$SeedLabel.text = "Seed: %d" % rnd_seed
@@ -37,3 +38,9 @@ func on_toggle_sidebar(info : Dictionary) -> void:
 		
 		is_sidebar_active = true
 		$Sidebar.visible = true
+
+func on_update_turn(player : String) -> void:
+	$TurnLabel.text = "Turn : %s" % player
+
+func _on_EndTurnButton_pressed() -> void:
+	Globals.emit_signal("end_turn")

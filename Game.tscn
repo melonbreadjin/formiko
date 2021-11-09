@@ -171,6 +171,18 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="TurnLabel" type="Label" parent="CanvasLayer"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 0.198425
+margin_top = -28.2866
+margin_right = 67.1984
+margin_bottom = -14.2866
+text = "Turn : N/A"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="TileHighlight" type="Panel" parent="CanvasLayer"]
 modulate = Color( 1, 1, 1, 0.454902 )
 margin_right = 40.0
@@ -384,6 +396,14 @@ rect_min_size = Vector2( 64, 64 )
 texture = SubResource( 2 )
 stretch_mode = 1
 
+[node name="EndTurnButton" type="Button" parent="CanvasLayer"]
+margin_right = 12.0
+margin_bottom = 20.0
+text = "End Turn"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="World" type="Node" parent="."]
 
 [node name="TileMap" type="TileMap" parent="World"]
@@ -399,3 +419,5 @@ z_index = 10
 anchor_mode = 0
 current = true
 script = ExtResource( 3 )
+
+[connection signal="pressed" from="CanvasLayer/EndTurnButton" to="CanvasLayer" method="_on_EndTurnButton_pressed"]

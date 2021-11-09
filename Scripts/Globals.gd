@@ -24,6 +24,9 @@ enum unit_type{
 signal highlight_tile(pos, off, zoom)
 signal update_seed(rnd_seed)
 
+signal update_turn(player)
+signal end_turn()
+
 signal toggle_sidebar(info)
 
 var world_size : Vector2 = Vector2(16, 16)
