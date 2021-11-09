@@ -34,6 +34,24 @@ var world_size : Vector2 = Vector2(16, 16)
 var player_count : int = 1
 var bot_count : int = 1
 
+var worldgen_parameters = {
+	"CHANCE_GRASS" : 0.475,
+	"CHANCE_FLOWER" : 0.625,
+	"CHANCE_TREE" : 0.725,
+	"CHANCE_TREE_BEE" : 0.775,
+	"CHANCE_SAND" : 0.875,
+	"CHANCE_PUDDLE" : 1.0
+}
+
+var food_yields = {
+	"grass" : 0.25,
+	"flower" : 1.0,
+	"tree" : 0.75,
+	"tree_bee" : 0.75,
+	"sand" : 0,
+	"puddle" : 0.5
+}
+
 var starting_units : Dictionary = {
 	unit_type.ANT_WORKER : 10,
 	unit_type.ANT_SOLDIER : 1,

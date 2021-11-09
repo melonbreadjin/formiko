@@ -35,6 +35,7 @@ func on_toggle_sidebar(info : Dictionary) -> void:
 	else:
 		$Sidebar/Panel/Container/TileInfo/TileNameLabel.text = info.tile_name
 		$Sidebar/Panel/Container/TileInfo/TileImage.texture.region.position = info.tile_region.position
+		$Sidebar/Panel/Container/YieldInfo/YieldLabel.text = "%.2f per turn" % info.tile_yield
 		
 		is_sidebar_active = true
 		$Sidebar.visible = true

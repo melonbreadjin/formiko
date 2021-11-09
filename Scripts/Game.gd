@@ -2,18 +2,10 @@ extends Node
 
 onready var unit = preload("res://Entities/Unit.tscn")
 
-export(Dictionary) var worldgen_parameters = {
-	"CHANCE_GRASS" : 0.475,
-	"CHANCE_FLOWER" : 0.625,
-	"CHANCE_TREE" : 0.725,
-	"CHANCE_TREE_BEE" : 0.775,
-	"CHANCE_SAND" : 0.875,
-	"CHANCE_PUDDLE" : 1.0
-}
-
 var tilemap : TileMap
 var tileset : TileSet
 
+var yield_map : Array
 var players : Array
 
 var game_seed : int
@@ -100,10 +92,13 @@ func _unhandled_input(event : InputEvent) -> void:
 		var mouse_position : Vector2 = event.position
 		
 		if not event.pressed and event.button_index == BUTTON_LEFT and $Camera.mouse_drag_delta == Vector2.ZERO:
+			var pos : Vector2 = tilemap.world_to_map((mouse_position * $Camera.zoom + $Camera.position) / tilemap.scale)
+			
 			Globals.emit_signal("toggle_sidebar", {
-				"tilemap_position" : tilemap.world_to_map((mouse_position * $Camera.zoom + $Camera.position) / tilemap.scale),
-				"tile_name" : tileset.tile_get_name(tilemap.get_cellv(tilemap.world_to_map((mouse_position * $Camera.zoom + $Camera.position) / tilemap.scale))),
-				"tile_region" : tileset.tile_get_region(tilemap.get_cellv(tilemap.world_to_map((mouse_position * $Camera.zoom + $Camera.position) / tilemap.scale)))
+				"tilemap_position" : pos,
+				"tile_name" : tileset.tile_get_name(tilemap.get_cellv(pos)),
+				"tile_region" : tileset.tile_get_region(tilemap.get_cellv(pos)),
+				"tile_yield" : yield_map[pos.y][pos.x]
 			})
 
 func _unhandled_key_input(event : InputEventKey) -> void:
@@ -117,21 +112,28 @@ func create_world(rnd_seed : int) -> void:
 	randomize()
 	
 	for y in Globals.world_size.y:
+		yield_map.append([])
 		for x in Globals.world_size.x:
 			var i = randf()
 			
-			if i < worldgen_parameters["CHANCE_GRASS"]:
+			if i < Globals.worldgen_parameters["CHANCE_GRASS"]:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("grass_%d" % (randi() % 3 + 1)))
-			elif i < worldgen_parameters["CHANCE_FLOWER"]:
+				yield_map[y].append(Globals.food_yields["grass"])
+			elif i < Globals.worldgen_parameters["CHANCE_FLOWER"]:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("flower_%d" % (randi() % 3 + 1)))
-			elif i < worldgen_parameters["CHANCE_TREE"]:
+				yield_map[y].append(Globals.food_yields["flower"])
+			elif i < Globals.worldgen_parameters["CHANCE_TREE"]:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("tree"))
-			elif i < worldgen_parameters["CHANCE_TREE_BEE"]:
+				yield_map[y].append(Globals.food_yields["tree"])
+			elif i < Globals.worldgen_parameters["CHANCE_TREE_BEE"]:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("tree_bee"))
-			elif i < worldgen_parameters["CHANCE_SAND"]:
+				yield_map[y].append(Globals.food_yields["tree_bee"])
+			elif i < Globals.worldgen_parameters["CHANCE_SAND"]:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("sand"))
-			elif i < worldgen_parameters["CHANCE_PUDDLE"]:
+				yield_map[y].append(Globals.food_yields["sand"])
+			elif i < Globals.worldgen_parameters["CHANCE_PUDDLE"]:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("puddle"))
+				yield_map[y].append(Globals.food_yields["puddle"])
 
 func on_end_turn() -> void:
 	active_player = (active_player + 1) % player_count
