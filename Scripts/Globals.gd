@@ -9,7 +9,12 @@ const CAMERA_ZOOMSPEED : float = 4.0
 const CAMERA_ZOOM_EXTENTS_MIN : float = 0.75
 const CAMERA_ZOOM_EXTENTS_MAX : float = 1.5
 
-const unit_names : Array = [
+const COLOURS : Array = [
+	Color.red,
+	Color.blue
+]
+
+const UNIT_NAMES : Array = [
 	"Worker Ant",
 	"Soldier Ant",
 	"Queen Ant"

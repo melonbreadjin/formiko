@@ -28,9 +28,9 @@ func new_game() -> void:
 	
 	for i in range(Globals.player_count + Globals.bot_count):
 		if i < Globals.player_count:
-			players.append(["Player %d" % (i + 1), false])
+			players.append(["Player %d" % (i + 1), false, Globals.COLOURS[i]])
 		else:
-			players.append(["Player %d (Bot)" % (i + 1), true])
+			players.append(["Player %d (Bot)" % (i + 1), true, Globals.COLOURS[i]])
 	
 	player_count = players.size()
 	active_player = 0
@@ -54,11 +54,12 @@ func init_players() -> void:
 				var instance = unit.instance()
 				
 				instance.unit_type = Globals.starting_units.keys()[entry]
-				instance.name = Globals.unit_names[instance.unit_type]
+				instance.name = Globals.UNIT_NAMES[instance.unit_type]
 				
 				instance.position = spawn_points[index] * Globals.BLOCK_SIZE
+				instance.get_node("Polygon2D").color = players[index][2]
 				
-				players[index][2].add_child(instance)
+				players[index][3].add_child(instance)
 
 func init_spawn_points() -> PoolVector2Array:
 	var indeces : Array = []
