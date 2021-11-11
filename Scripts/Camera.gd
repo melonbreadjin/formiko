@@ -1,5 +1,7 @@
 extends Camera2D
 
+onready var ui_elements = preload("res://Assets/ui_elements_atlas.tres")
+
 var drag_direction : Vector2
 var move_direction : Vector2
 var zoom_direction : Vector2
@@ -15,6 +17,9 @@ func _ready() -> void:
 	limit_left = 0
 	limit_right = int(Globals.world_size.x * Globals.BLOCK_SIZE)
 	limit_bottom = int(Globals.world_size.y * Globals.BLOCK_SIZE)
+	
+	ui_elements.region.position = Vector2(64, 0)
+	Input.set_custom_mouse_cursor(ui_elements, Input.CURSOR_ARROW, Vector2(0, 16))
 
 func _unhandled_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
@@ -27,6 +32,7 @@ func _unhandled_input(event : InputEvent) -> void:
 			mouse_drag_delta = mouse_post_drag - mouse_pre_drag
 	
 	if event is InputEventMouseMotion and is_camera_dragging:
+		Globals.emit_signal("toggle_sidebar", {})
 		Globals.emit_signal("highlight_tile", null, null, null)
 		drag_direction = event.relative.normalized()
 	
@@ -41,6 +47,9 @@ func _process(delta : float) -> void:
 		Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 	)
 	move_direction = (move_direction - drag_direction).normalized()
+	
+	if move_direction != Vector2.ZERO:
+		Globals.emit_signal("toggle_sidebar", {})
 	
 	zoom += zoom_direction * Globals.CAMERA_ZOOMSPEED * delta
 	zoom.x = clamp(zoom.x, Globals.CAMERA_ZOOM_EXTENTS_MIN, Globals.CAMERA_ZOOM_EXTENTS_MAX)

@@ -29,13 +29,13 @@ func on_highlight_tile(pos, off, zoom) -> void:
 	$TileHighlight.rect_scale = Vector2(1.0 / zoom.x, 1.0 / zoom.y)
 
 func on_toggle_sidebar(info : Dictionary) -> void:
-	if is_sidebar_active:
+	if is_sidebar_active or info.size() == 0:
 		is_sidebar_active = false
 		$Sidebar.visible = false
 	else:
-		$Sidebar/Panel/Container/TileInfo/TileNameLabel.text = info.tile_name
-		$Sidebar/Panel/Container/TileInfo/TileImage.texture.region.position = info.tile_region.position
-		$Sidebar/Panel/Container/YieldInfo/YieldLabel.text = "%.2f per turn" % info.tile_yield
+		$Sidebar/Container/TileInfo/TileNameLabel.text = info.tile_name
+		$Sidebar/Container/TileInfo/TileImage.texture.region.position = info.tile_region.position
+		$Sidebar/Container/YieldInfo/YieldLabel.text = "%.2f per turn" % info.tile_yield
 		
 		is_sidebar_active = true
 		$Sidebar.visible = true
