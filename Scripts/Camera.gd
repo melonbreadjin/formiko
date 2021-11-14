@@ -2,6 +2,8 @@ extends Camera2D
 
 onready var ui_elements = preload("res://Assets/ui_elements_atlas.tres")
 
+var drag_velocity : Vector2
+
 var drag_direction : Vector2
 var move_direction : Vector2
 var zoom_direction : Vector2
@@ -35,6 +37,7 @@ func _unhandled_input(event : InputEvent) -> void:
 		Globals.emit_signal("toggle_sidebar", {})
 		Globals.emit_signal("highlight_tile", null, null, null)
 		drag_direction = event.relative.normalized()
+		drag_velocity = event.speed
 	
 	if event.is_action_pressed("ui_zoom_in"):
 		zoom_direction = Vector2(-1.0, -1.0)
@@ -56,9 +59,15 @@ func _process(delta : float) -> void:
 	zoom.y = clamp(zoom.y, Globals.CAMERA_ZOOM_EXTENTS_MIN, Globals.CAMERA_ZOOM_EXTENTS_MAX)
 	zoom_direction = Vector2.ZERO
 	
-	position += move_direction / zoom.x * Globals.CAMERA_MOVESPEED * Globals.BLOCK_SIZE * delta * (Globals.CAMERA_DRAGSPEED if is_camera_dragging else 1.0)
+	if is_camera_dragging:
+		position -= drag_velocity * delta
+	else:
+		position += move_direction * Vector2(Globals.CAMERA_MOVESPEED, Globals.CAMERA_MOVESPEED) * Globals.BLOCK_SIZE * delta
+	
 	position.x = clamp(position.x, limit_left, limit_right - get_viewport().size.x * zoom.x)
 	position.y = clamp(position.y, limit_top, limit_bottom - get_viewport().size.y * zoom.y)
+	
 	drag_direction = Vector2.ZERO
+	drag_velocity = Vector2.ZERO
 	
 	Globals.emit_signal("highlight_tile", get_local_mouse_position(), position, zoom)
