@@ -16,6 +16,12 @@ var player_count : int
 
 var _sgn
 
+class Player:
+	var name : String
+	var is_bot : bool
+	var colour : Color
+	var node : Node2D
+
 func _ready() -> void:
 	tilemap = $World/TileMap
 	tileset = tilemap.tile_set
@@ -29,10 +35,17 @@ func new_game() -> void:
 	create_world(randi())
 	
 	for i in range(Globals.player_count + Globals.bot_count):
+		var player : Player = Player.new()
+		
 		if i < Globals.player_count:
-			players.append(["Player %d" % (i + 1), false, Globals.COLOURS[i]])
+			player.name = "Player %d" % (i + 1)
+			player.is_bot = false
 		else:
-			players.append(["Player %d (Bot)" % (i + 1), true, Globals.COLOURS[i]])
+			player.name = "Player %d (Bot)" % (i + 1)
+			player.is_bot = true
+		
+		player.colour = Globals.COLOURS[i]
+		players.append(player)
 	
 	player_count = players.size()
 	active_player = 0
@@ -43,9 +56,9 @@ func init_players() -> void:
 	for player in players:
 		var node : Node2D = Node2D.new()
 		
-		node.name = player[0]
+		node.name = player.name
 		
-		players[players.find(player)].append(node)
+		players[players.find(player)].node = node
 		$World/Entities.add_child(node)
 	
 	var spawn_points : Array = init_spawn_points()
@@ -59,11 +72,11 @@ func init_players() -> void:
 				instance.name = Globals.UNIT_NAMES[instance.unit_type]
 				
 				instance.position = spawn_points[index] * Globals.BLOCK_SIZE
-				instance.get_node("Polygon2D").color = players[index][2]
+				instance.get_node("Polygon2D").color = players[index].colour
 				
 				unit_map[spawn_points[index].y][spawn_points[index].x].append(instance)
 				
-				players[index][3].add_child(instance)
+				players[index].node.add_child(instance)
 
 func init_spawn_points() -> PoolVector2Array:
 	var indeces : Array = []
