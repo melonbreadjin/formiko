@@ -1,4 +1,5 @@
 extends Node
+class_name Game
 
 onready var unit = preload("res://Entities/Unit.tscn")
 
@@ -29,6 +30,11 @@ class Player:
 	}
 	
 	var resources : Dictionary = {
+		Globals.resource.FOOD : 0,
+		Globals.resource.HONEY : 0
+	}
+	
+	var added_resources : Dictionary = {
 		Globals.resource.FOOD : 0,
 		Globals.resource.HONEY : 0
 	}
@@ -181,11 +187,14 @@ func create_world(rnd_seed : int) -> void:
 				yield_map[y].append(Globals.food_yields["puddle"])
 
 func on_end_turn() -> void:
+	var total : float = 0.0
+	
 	for worker in players[active_player].node.get_children():
 		if worker.unit_type == Globals.unit_type.ANT_WORKER:
-			players[active_player].resources[Globals.resource.FOOD] += yield_map[worker.tile_pos.y][worker.tile_pos.x]
+			total += yield_map[worker.tile_pos.y][worker.tile_pos.x]
 	
-	print("%s food : %f" % [players[active_player].name, players[active_player].resources[Globals.resource.FOOD]])
+	players[active_player].resources[Globals.resource.FOOD] += total
+	players[active_player].added_resources[Globals.resource.FOOD] = total
 	
+	Globals.emit_signal("update_turn", active_player, players[active_player].name, players[active_player])
 	active_player = (active_player + 1) % player_count
-	Globals.emit_signal("update_turn", players[active_player].name)

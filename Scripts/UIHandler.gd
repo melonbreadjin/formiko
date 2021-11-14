@@ -62,8 +62,21 @@ func _process(_delta : float) -> void:
 	if $Sidebar.rect_position.y != target:
 		$Sidebar.rect_position.y = lerp($Sidebar.rect_position.y, target, 0.25)
 
-func on_update_turn(player : String) -> void:
-	$TurnLabel.text = "Turn : %s" % player
+func on_update_turn(player : int, player_name : String, data : Game.Player) -> void:
+	if player == 0:
+		update_hud(data)
+	
+	$TurnLabel.text = "Turn : %s" % player_name
+
+func update_hud(data : Game.Player):
+	$Data/FoodData/VBoxContainer/FoodLabel.bbcode_text = "%0.*f [color=%s](%c%0.*f)[/color]" % [
+		2 if fmod(data.resources[Globals.resource.FOOD], 1) else 0,
+		data.resources[Globals.resource.FOOD],
+		"#3d875e" if sign(data.added_resources[Globals.resource.FOOD]) else "#e64e4b",
+		"+" if sign(data.added_resources[Globals.resource.FOOD]) else "-",
+		2 if fmod(data.added_resources[Globals.resource.FOOD], 1) else 0,
+		data.added_resources[Globals.resource.FOOD]
+	]
 
 func _on_EndTurnButton_pressed() -> void:
 	Globals.emit_signal("end_turn")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://Scripts/Game.gd" type="Script" id=1]
 [ext_resource path="res://Assets/tilemap.png" type="Texture" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://Assets/ui_elements.png" type="Texture" id=7]
 [ext_resource path="res://Assets/Fonts/Kenney Mini Square Default.tres" type="DynamicFont" id=8]
 [ext_resource path="res://Assets/Fonts/Kenney Mini Square Large.tres" type="DynamicFont" id=9]
+[ext_resource path="res://Assets/Fonts/Kenney Mini Square Extra Large.tres" type="DynamicFont" id=10]
 
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 5 )
@@ -18,15 +19,19 @@ region = Rect2( 0, 0, 32, 32 )
 atlas = ExtResource( 2 )
 region = Rect2( 0, 0, 16, 16 )
 
+[sub_resource type="AtlasTexture" id=3]
+atlas = ExtResource( 7 )
+region = Rect2( 0, 32, 32, 32 )
+
+[sub_resource type="AtlasTexture" id=4]
+atlas = ExtResource( 2 )
+region = Rect2( 0, 0, 16, 16 )
+
 [sub_resource type="AtlasTexture" id=5]
 atlas = ExtResource( 7 )
 region = Rect2( 0, 32, 32, 32 )
 
-[sub_resource type="AtlasTexture" id=3]
-atlas = ExtResource( 2 )
-region = Rect2( 0, 0, 16, 16 )
-
-[sub_resource type="TileSet" id=4]
+[sub_resource type="TileSet" id=6]
 0/name = "grass_1"
 0/texture = ExtResource( 2 )
 0/tex_offset = Vector2( 0, 0 )
@@ -198,7 +203,7 @@ __meta__ = {
 
 [node name="TileHighlight" type="TextureRect" parent="CanvasLayer"]
 modulate = Color( 1, 1, 1, 0.886275 )
-margin_right = 40.0
+margin_left = -40.0
 margin_bottom = 40.0
 mouse_filter = 2
 texture = SubResource( 1 )
@@ -304,7 +309,7 @@ margin_left = 14.0
 margin_right = 46.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 32, 32 )
-texture = SubResource( 5 )
+texture = SubResource( 3 )
 stretch_mode = 1
 __meta__ = {
 "_edit_use_anchors_": false
@@ -345,7 +350,7 @@ columns = 4
 margin_right = 64.0
 margin_bottom = 64.0
 rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 3 )
+texture = SubResource( 4 )
 stretch_mode = 1
 __meta__ = {
 "_edit_use_anchors_": false
@@ -382,11 +387,61 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Data" type="Control" parent="CanvasLayer"]
+margin_right = 512.0
+margin_bottom = 128.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FoodData" type="HBoxContainer" parent="CanvasLayer/Data"]
+margin_left = 16.0
+margin_right = 496.0
+margin_bottom = 64.0
+mouse_filter = 2
+custom_constants/separation = 16
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Data/FoodData"]
+margin_right = 64.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
+mouse_filter = 2
+texture = SubResource( 5 )
+expand = true
+stretch_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Data/FoodData"]
+margin_left = 80.0
+margin_right = 592.0
+margin_bottom = 64.0
+mouse_filter = 2
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FoodLabel" type="RichTextLabel" parent="CanvasLayer/Data/FoodData/VBoxContainer"]
+margin_top = 8.0
+margin_right = 512.0
+margin_bottom = 56.0
+rect_min_size = Vector2( 512, 48 )
+rect_clip_content = false
+mouse_filter = 2
+custom_fonts/normal_font = ExtResource( 10 )
+bbcode_enabled = true
+bbcode_text = "0 [color=](+0)[/color]"
+text = "0 (+0)"
+scroll_active = false
+
 [node name="World" type="Node" parent="."]
 
 [node name="TileMap" type="TileMap" parent="World"]
 scale = Vector2( 8, 8 )
-tile_set = SubResource( 4 )
+tile_set = SubResource( 6 )
 cell_size = Vector2( 16, 16 )
 format = 1
 
