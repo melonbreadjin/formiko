@@ -26,6 +26,11 @@ enum unit_type{
 	ANT_QUEEN
 }
 
+enum resource{
+	FOOD,
+	HONEY
+}
+
 signal highlight_tile(pos, off, zoom)
 signal update_seed(rnd_seed)
 

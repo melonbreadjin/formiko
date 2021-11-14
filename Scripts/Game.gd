@@ -21,6 +21,20 @@ class Player:
 	var is_bot : bool
 	var colour : Color
 	var node : Node2D
+	
+	var units : Dictionary = {
+		Globals.unit_type.ANT_WORKER : 0,
+		Globals.unit_type.ANT_SOLDIER : 0,
+		Globals.unit_type.ANT_QUEEN : 0
+	}
+	
+	var resources : Dictionary = {
+		Globals.resource.FOOD : 0,
+		Globals.resource.HONEY : 0
+	}
+	
+	func _to_string():
+		return "[name : %s, is_bot : %s, colour : %s, units : %s]" % [name, is_bot, colour, units]
 
 func _ready() -> void:
 	tilemap = $World/TileMap
@@ -69,6 +83,7 @@ func init_players() -> void:
 				var instance = unit.instance()
 				
 				instance.unit_type = Globals.starting_units.keys()[entry]
+				instance.tile_pos = spawn_points[index]
 				instance.name = Globals.UNIT_NAMES[instance.unit_type]
 				
 				instance.position = spawn_points[index] * Globals.BLOCK_SIZE
@@ -76,6 +91,7 @@ func init_players() -> void:
 				
 				unit_map[spawn_points[index].y][spawn_points[index].x].append(instance)
 				
+				players[index].units[Globals.starting_units.keys()[entry]] += 1
 				players[index].node.add_child(instance)
 
 func init_spawn_points() -> PoolVector2Array:
@@ -165,5 +181,11 @@ func create_world(rnd_seed : int) -> void:
 				yield_map[y].append(Globals.food_yields["puddle"])
 
 func on_end_turn() -> void:
+	for worker in players[active_player].node.get_children():
+		if worker.unit_type == Globals.unit_type.ANT_WORKER:
+			players[active_player].resources[Globals.resource.FOOD] += yield_map[worker.tile_pos.y][worker.tile_pos.x]
+	
+	print("%s food : %f" % [players[active_player].name, players[active_player].resources[Globals.resource.FOOD]])
+	
 	active_player = (active_player + 1) % player_count
-	Globals.emit_signal("update_turn", players[active_player][0])
+	Globals.emit_signal("update_turn", players[active_player].name)
