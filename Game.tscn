@@ -190,6 +190,7 @@ __meta__ = {
 }
 
 [node name="TileHighlight" type="TextureRect" parent="CanvasLayer"]
+modulate = Color( 1, 1, 1, 0.886275 )
 margin_right = 40.0
 margin_bottom = 40.0
 mouse_filter = 2
@@ -200,11 +201,11 @@ __meta__ = {
 }
 
 [node name="Sidebar" type="Control" parent="CanvasLayer"]
-visible = false
 anchor_left = 0.6
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 0
+grow_vertical = 0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -283,7 +284,7 @@ text = "UNITS:"
 [node name="UnitDetails" type="GridContainer" parent="CanvasLayer/Sidebar/Container"]
 margin_top = 188.0
 margin_right = 345.0
-margin_bottom = 540.0
+margin_bottom = 252.0
 custom_constants/vseparation = 32
 custom_constants/hseparation = 28
 columns = 4
@@ -297,117 +298,6 @@ stretch_mode = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="TileImage2" type="TextureRect" parent="CanvasLayer/Sidebar/Container/UnitDetails"]
-margin_left = 92.0
-margin_right = 156.0
-margin_bottom = 64.0
-rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 3 )
-stretch_mode = 1
-
-[node name="TileImage3" type="TextureRect" parent="CanvasLayer/Sidebar/Container/UnitDetails"]
-margin_left = 184.0
-margin_right = 248.0
-margin_bottom = 64.0
-rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 3 )
-stretch_mode = 1
-
-[node name="TileImage4" type="TextureRect" parent="CanvasLayer/Sidebar/Container/UnitDetails"]
-margin_left = 276.0
-margin_right = 340.0
-margin_bottom = 64.0
-rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 3 )
-stretch_mode = 1
-
-[node name="TileImage5" type="TextureRect" parent="CanvasLayer/Sidebar/Container/UnitDetails"]
-margin_top = 96.0
-margin_right = 64.0
-margin_bottom = 160.0
-rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 3 )
-stretch_mode = 1
-
-[node name="TileImage6" type="TextureRect" parent="CanvasLayer/Sidebar/Container/UnitDetails"]
-margin_left = 92.0
-margin_top = 96.0
-margin_right = 156.0
-margin_bottom = 160.0
-rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 3 )
-stretch_mode = 1
-
-[node name="TileImage7" type="TextureRect" parent="CanvasLayer/Sidebar/Container/UnitDetails"]
-margin_left = 184.0
-margin_top = 96.0
-margin_right = 248.0
-margin_bottom = 160.0
-rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 3 )
-stretch_mode = 1
-
-[node name="TileImage8" type="TextureRect" parent="CanvasLayer/Sidebar/Container/UnitDetails"]
-margin_left = 276.0
-margin_top = 96.0
-margin_right = 340.0
-margin_bottom = 160.0
-rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 3 )
-stretch_mode = 1
-
-[node name="TileImage9" type="TextureRect" parent="CanvasLayer/Sidebar/Container/UnitDetails"]
-margin_top = 192.0
-margin_right = 64.0
-margin_bottom = 256.0
-rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 3 )
-stretch_mode = 1
-
-[node name="TileImage10" type="TextureRect" parent="CanvasLayer/Sidebar/Container/UnitDetails"]
-margin_left = 92.0
-margin_top = 192.0
-margin_right = 156.0
-margin_bottom = 256.0
-rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 3 )
-stretch_mode = 1
-
-[node name="TileImage11" type="TextureRect" parent="CanvasLayer/Sidebar/Container/UnitDetails"]
-margin_left = 184.0
-margin_top = 192.0
-margin_right = 248.0
-margin_bottom = 256.0
-rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 3 )
-stretch_mode = 1
-
-[node name="TileImage12" type="TextureRect" parent="CanvasLayer/Sidebar/Container/UnitDetails"]
-margin_left = 276.0
-margin_top = 192.0
-margin_right = 340.0
-margin_bottom = 256.0
-rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 3 )
-stretch_mode = 1
-
-[node name="TileImage13" type="TextureRect" parent="CanvasLayer/Sidebar/Container/UnitDetails"]
-margin_top = 288.0
-margin_right = 64.0
-margin_bottom = 352.0
-rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 3 )
-stretch_mode = 1
-
-[node name="TileImage14" type="TextureRect" parent="CanvasLayer/Sidebar/Container/UnitDetails"]
-margin_left = 92.0
-margin_top = 288.0
-margin_right = 156.0
-margin_bottom = 352.0
-rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 3 )
-stretch_mode = 1
 
 [node name="EndTurnButton" type="Button" parent="CanvasLayer"]
 margin_right = 12.0

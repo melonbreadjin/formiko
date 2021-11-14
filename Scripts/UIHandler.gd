@@ -8,6 +8,8 @@ func _ready() -> void:
 	_sgn = Globals.connect("highlight_tile", self, "on_highlight_tile")
 	_sgn = Globals.connect("toggle_sidebar", self, "on_toggle_sidebar")
 	_sgn = Globals.connect("update_turn", self, "on_update_turn")
+	
+	$Sidebar.rect_position.y = 600
 
 func on_update_seed(rnd_seed) -> void:
 	$SeedLabel.text = "Seed: %d" % rnd_seed
@@ -31,14 +33,22 @@ func on_highlight_tile(pos, off, zoom) -> void:
 func on_toggle_sidebar(info : Dictionary) -> void:
 	if is_sidebar_active or info.size() == 0:
 		is_sidebar_active = false
-		$Sidebar.visible = false
 	else:
 		$Sidebar/Container/TileInfo/TileNameLabel.text = info.tile_name
 		$Sidebar/Container/TileInfo/TileImage.texture.region.position = info.tile_region.position
 		$Sidebar/Container/YieldInfo/YieldLabel.text = "%.2f per turn" % info.tile_yield
 		
 		is_sidebar_active = true
-		$Sidebar.visible = true
+
+func _process(_delta : float) -> void:
+	var target : float
+	
+	if is_sidebar_active:
+		target = 300.0
+	else:
+		target = 600.0
+	
+	$Sidebar.rect_position.y = lerp($Sidebar.rect_position.y, target, 0.25)
 
 func on_update_turn(player : String) -> void:
 	$TurnLabel.text = "Turn : %s" % player
