@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://Scripts/Game.gd" type="Script" id=1]
 [ext_resource path="res://Assets/tilemap.png" type="Texture" id=2]
@@ -6,6 +6,8 @@
 [ext_resource path="res://Scripts/UIHandler.gd" type="Script" id=4]
 [ext_resource path="res://Assets/ui_tile_highlight.tres" type="Texture" id=5]
 [ext_resource path="res://Assets/ui_panel.png" type="Texture" id=6]
+[ext_resource path="res://Assets/ui_elements.png" type="Texture" id=7]
+[ext_resource path="res://Assets/Fonts/Kenney Mini Square Default.tres" type="DynamicFont" id=8]
 
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 5 )
@@ -14,6 +16,10 @@ region = Rect2( 0, 0, 32, 32 )
 [sub_resource type="AtlasTexture" id=2]
 atlas = ExtResource( 2 )
 region = Rect2( 0, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=5]
+atlas = ExtResource( 7 )
+region = Rect2( 0, 32, 32, 32 )
 
 [sub_resource type="AtlasTexture" id=3]
 atlas = ExtResource( 2 )
@@ -201,9 +207,13 @@ __meta__ = {
 }
 
 [node name="Sidebar" type="Control" parent="CanvasLayer"]
-anchor_left = 0.6
+anchor_left = 1.0
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_left = -408.0
+margin_top = -600.0
+margin_right = 1.59998
 grow_horizontal = 0
 grow_vertical = 0
 __meta__ = {
@@ -221,21 +231,25 @@ patch_margin_left = 5
 patch_margin_top = 5
 patch_margin_right = 5
 patch_margin_bottom = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Container" type="VBoxContainer" parent="CanvasLayer/Sidebar"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 32.0
 margin_top = 32.0
-margin_right = -32.0
+margin_right = -34.0
 margin_bottom = -32.0
-custom_constants/separation = 32
+custom_constants/separation = 16
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="TileInfo" type="HBoxContainer" parent="CanvasLayer/Sidebar/Container"]
-margin_right = 345.0
+visible = false
+margin_right = 484.0
 margin_bottom = 64.0
 custom_constants/separation = 64
 
@@ -254,37 +268,74 @@ margin_bottom = 39.0
 text = "TILE NAME"
 
 [node name="YieldInfo" type="HBoxContainer" parent="CanvasLayer/Sidebar/Container"]
-margin_top = 96.0
-margin_right = 345.0
-margin_bottom = 110.0
+margin_right = 343.0
+margin_bottom = 32.0
+grow_horizontal = 2
 custom_constants/separation = 64
+alignment = 2
 
 [node name="YieldTextLabel" type="Label" parent="CanvasLayer/Sidebar/Container/YieldInfo"]
-margin_right = 63.0
-margin_bottom = 14.0
+visible = false
+margin_left = 59.0
+margin_top = 9.0
+margin_right = 122.0
+margin_bottom = 23.0
 text = "YIELDS:    "
 
-[node name="YieldLabel" type="Label" parent="CanvasLayer/Sidebar/Container/YieldInfo"]
-margin_left = 127.0
-margin_right = 221.0
-margin_bottom = 14.0
-text = "x food per turn"
+[node name="YieldData" type="HBoxContainer" parent="CanvasLayer/Sidebar/Container/YieldInfo"]
+margin_left = 221.0
+margin_right = 343.0
+margin_bottom = 32.0
+custom_constants/separation = 4
+
+[node name="YieldCountLabel" type="Label" parent="CanvasLayer/Sidebar/Container/YieldInfo/YieldData"]
+margin_top = 6.0
+margin_right = 10.0
+margin_bottom = 26.0
+custom_fonts/font = ExtResource( 8 )
+text = "x"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TileImage" type="TextureRect" parent="CanvasLayer/Sidebar/Container/YieldInfo/YieldData"]
+margin_left = 14.0
+margin_right = 46.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 32, 32 )
+texture = SubResource( 5 )
+stretch_mode = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="YieldLabel" type="Label" parent="CanvasLayer/Sidebar/Container/YieldInfo/YieldData"]
+margin_left = 50.0
+margin_top = 6.0
+margin_right = 122.0
+margin_bottom = 26.0
+custom_fonts/font = ExtResource( 8 )
+text = "per turn"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="UnitInfo" type="HBoxContainer" parent="CanvasLayer/Sidebar/Container"]
-margin_top = 142.0
-margin_right = 345.0
-margin_bottom = 156.0
+margin_top = 48.0
+margin_right = 343.0
+margin_bottom = 68.0
 custom_constants/separation = 64
 
 [node name="UnitTextLabel" type="Label" parent="CanvasLayer/Sidebar/Container/UnitInfo"]
-margin_right = 43.0
-margin_bottom = 14.0
+margin_right = 46.0
+margin_bottom = 20.0
+custom_fonts/font = ExtResource( 8 )
 text = "UNITS:"
 
 [node name="UnitDetails" type="GridContainer" parent="CanvasLayer/Sidebar/Container"]
-margin_top = 188.0
-margin_right = 345.0
-margin_bottom = 252.0
+margin_top = 84.0
+margin_right = 343.0
+margin_bottom = 148.0
 custom_constants/vseparation = 32
 custom_constants/hseparation = 28
 columns = 4

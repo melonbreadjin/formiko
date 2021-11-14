@@ -5,7 +5,9 @@ onready var unit = preload("res://Entities/Unit.tscn")
 var tilemap : TileMap
 var tileset : TileSet
 
+var unit_map : Array
 var yield_map : Array
+
 var players : Array
 
 var game_seed : int
@@ -59,6 +61,8 @@ func init_players() -> void:
 				instance.position = spawn_points[index] * Globals.BLOCK_SIZE
 				instance.get_node("Polygon2D").color = players[index][2]
 				
+				unit_map[spawn_points[index].y][spawn_points[index].x].append(instance)
+				
 				players[index][3].add_child(instance)
 
 func init_spawn_points() -> PoolVector2Array:
@@ -99,8 +103,12 @@ func _unhandled_input(event : InputEvent) -> void:
 				"tilemap_position" : pos,
 				"tile_name" : tileset.tile_get_name(tilemap.get_cellv(pos)),
 				"tile_region" : tileset.tile_get_region(tilemap.get_cellv(pos)),
-				"tile_yield" : yield_map[pos.y][pos.x]
+				"tile_yield" : yield_map[pos.y][pos.x],
+				"units" : get_units_in_tile(pos)
 			})
+
+func get_units_in_tile(pos : Vector2) -> Array:
+	return unit_map[pos.y][pos.x]
 
 func _unhandled_key_input(event : InputEventKey) -> void:
 	if "dev" in Globals.BUILD and event.scancode == KEY_F1 and event.pressed:
@@ -114,7 +122,11 @@ func create_world(rnd_seed : int) -> void:
 	
 	for y in Globals.world_size.y:
 		yield_map.append([])
+		unit_map.append([])
+		
 		for x in Globals.world_size.x:
+			unit_map[y].append([])
+			
 			var i = randf()
 			
 			if i < Globals.worldgen_parameters["CHANCE_GRASS"]:
