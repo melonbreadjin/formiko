@@ -13,10 +13,10 @@ var mouse_post_drag : Vector2
 var mouse_drag_delta : Vector2
 
 func _ready() -> void:
-	limit_top = 0
-	limit_left = 0
-	limit_right = int(Globals.world_size.x * Globals.BLOCK_SIZE)
-	limit_bottom = int(Globals.world_size.y * Globals.BLOCK_SIZE)
+	limit_top = int(-Globals.BLOCK_SIZE * 4)
+	limit_left = int(-Globals.BLOCK_SIZE * 4)
+	limit_right = int(Globals.world_size.x * Globals.BLOCK_SIZE + Globals.BLOCK_SIZE * 4)
+	limit_bottom = int(Globals.world_size.y * Globals.BLOCK_SIZE + Globals.BLOCK_SIZE * 4)
 	
 	ui_elements.region.position = Vector2(64, 0)
 	Input.set_custom_mouse_cursor(ui_elements, Input.CURSOR_ARROW, Vector2(0, 16))

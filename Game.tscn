@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Scripts/Game.gd" type="Script" id=1]
 [ext_resource path="res://Assets/tilemap.png" type="Texture" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://Assets/ui_panel.png" type="Texture" id=6]
 [ext_resource path="res://Assets/ui_elements.png" type="Texture" id=7]
 [ext_resource path="res://Assets/Fonts/Kenney Mini Square Default.tres" type="DynamicFont" id=8]
+[ext_resource path="res://Assets/Fonts/Kenney Mini Square Large.tres" type="DynamicFont" id=9]
 
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 5 )
@@ -350,10 +351,33 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="EndTurnButton" type="Button" parent="CanvasLayer"]
-margin_right = 12.0
-margin_bottom = 20.0
-text = "End Turn"
+[node name="Panel" type="NinePatchRect" parent="CanvasLayer"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -208.0
+margin_right = -155.6
+margin_bottom = 10.0
+grow_horizontal = 0
+rect_scale = Vector2( 4, 4 )
+texture = ExtResource( 6 )
+patch_margin_left = 5
+patch_margin_top = 5
+patch_margin_right = 5
+patch_margin_bottom = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EndTurnButton" type="ToolButton" parent="CanvasLayer/Panel"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -52.4
+margin_right = 157.6
+margin_bottom = 40.0
+grow_horizontal = 0
+rect_scale = Vector2( 0.25, 0.25 )
+custom_fonts/font = ExtResource( 9 )
+text = "END TURN"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -374,4 +398,4 @@ anchor_mode = 0
 current = true
 script = ExtResource( 3 )
 
-[connection signal="pressed" from="CanvasLayer/EndTurnButton" to="CanvasLayer" method="_on_EndTurnButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/Panel/EndTurnButton" to="CanvasLayer" method="_on_EndTurnButton_pressed"]

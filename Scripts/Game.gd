@@ -99,6 +99,9 @@ func _unhandled_input(event : InputEvent) -> void:
 		if not event.pressed and event.button_index == BUTTON_LEFT and $Camera.mouse_drag_delta == Vector2.ZERO:
 			var pos : Vector2 = tilemap.world_to_map((mouse_position * $Camera.zoom + $Camera.position) / tilemap.scale)
 			
+			if pos.x < 0 or pos.y < 0 or pos.x >= Globals.world_size.x or pos.y >= Globals.world_size.y:
+				return
+			
 			Globals.emit_signal("toggle_sidebar", {
 				"tilemap_position" : pos,
 				"tile_name" : tileset.tile_get_name(tilemap.get_cellv(pos)),
