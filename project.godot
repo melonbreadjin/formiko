@@ -43,6 +43,7 @@ gdscript/warnings/unused_signal=false
 window/size/width=1280
 window/size/height=720
 window/size/resizable=false
+window/stretch/aspect="keep"
 
 [input]
 

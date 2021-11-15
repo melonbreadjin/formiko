@@ -37,7 +37,7 @@ func _unhandled_input(event : InputEvent) -> void:
 		Globals.emit_signal("toggle_sidebar", {})
 		Globals.emit_signal("highlight_tile", null, null, null)
 		drag_direction = event.relative.normalized()
-		drag_velocity = event.speed
+		drag_velocity = event.relative
 	
 	if event.is_action_pressed("ui_zoom_in"):
 		zoom_direction = Vector2(-1.0, -1.0)
@@ -60,7 +60,7 @@ func _process(delta : float) -> void:
 	zoom_direction = Vector2.ZERO
 	
 	if is_camera_dragging:
-		position -= drag_velocity * delta
+		position -= drag_velocity * zoom
 	else:
 		position += move_direction * Vector2(Globals.CAMERA_MOVESPEED, Globals.CAMERA_MOVESPEED) * Globals.BLOCK_SIZE * delta
 	
