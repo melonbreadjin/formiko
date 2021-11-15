@@ -92,8 +92,9 @@ func init_players() -> void:
 				instance.tile_pos = spawn_points[index]
 				instance.name = Globals.UNIT_NAMES[instance.unit_type]
 				
-				instance.position = spawn_points[index] * Globals.BLOCK_SIZE
-				instance.get_node("Polygon2D").color = players[index].colour
+				instance.position = spawn_points[index] * Globals.BLOCK_SIZE + Vector2(Globals.BLOCK_SIZE / 2.0, Globals.BLOCK_SIZE / 2.0)
+				instance.get_node("Sprite").region_rect.position.y = Globals.ANT_SPRITE_SIZE * instance.unit_type
+				instance.get_node("Sprite").modulate = players[index].colour
 				
 				unit_map[spawn_points[index].y][spawn_points[index].x].append(instance)
 				
