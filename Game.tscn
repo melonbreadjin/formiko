@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://Scripts/Game.gd" type="Script" id=1]
 [ext_resource path="res://Assets/tilemap.png" type="Texture" id=2]
@@ -22,10 +22,6 @@ region = Rect2( 0, 0, 16, 16 )
 [sub_resource type="AtlasTexture" id=3]
 atlas = ExtResource( 7 )
 region = Rect2( 0, 32, 32, 32 )
-
-[sub_resource type="AtlasTexture" id=4]
-atlas = ExtResource( 2 )
-region = Rect2( 0, 0, 16, 16 )
 
 [sub_resource type="AtlasTexture" id=5]
 atlas = ExtResource( 7 )
@@ -341,20 +337,10 @@ text = "UNITS:"
 [node name="UnitDetails" type="GridContainer" parent="CanvasLayer/Sidebar/Container"]
 margin_top = 84.0
 margin_right = 343.0
-margin_bottom = 148.0
+margin_bottom = 84.0
 custom_constants/vseparation = 32
 custom_constants/hseparation = 28
 columns = 4
-
-[node name="TileImage" type="TextureRect" parent="CanvasLayer/Sidebar/Container/UnitDetails"]
-margin_right = 64.0
-margin_bottom = 64.0
-rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 4 )
-stretch_mode = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Panel" type="NinePatchRect" parent="CanvasLayer"]
 anchor_left = 1.0

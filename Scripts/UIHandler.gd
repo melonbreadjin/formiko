@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+onready var unit_detail = preload("res://Scenes/UnitDetail.tscn")
+
 var _sgn
 var is_sidebar_active = false
 
@@ -42,12 +44,22 @@ func on_highlight_tile(pos, off, zoom) -> void:
 
 func on_toggle_sidebar(info : Dictionary) -> void:
 	if is_sidebar_active or info.size() == 0:
+		for child in $Sidebar/Container/UnitDetails.get_children():
+			$Sidebar/Container/UnitDetails.remove_child(child)
+		
 		is_sidebar_active = false
 	else:
 		$Sidebar/Container/TileInfo/TileNameLabel.text = info.tile_name
 		$Sidebar/Container/TileInfo/TileImage.texture.region.position = info.tile_region.position
-		$Sidebar/Container/UnitDetails/TileImage.texture.region.position = info.tile_region.position
 		$Sidebar/Container/YieldInfo/YieldData/YieldCountLabel.text = "%.2f" % info.tile_yield
+		
+		for index in range(info.units.unit_handler.size()):
+			var instance = unit_detail.instance()
+			
+			instance.get_node("UnitImage").texture.region.position.y = Globals.ANT_SPRITE_SIZE * info.units.unit_handler[index][0]
+			instance.get_node("UnitImage").modulate = Globals.COLOURS[info.units.unit_instances[index].player]
+			
+			$Sidebar/Container/UnitDetails.add_child(instance)
 		
 		is_sidebar_active = true
 

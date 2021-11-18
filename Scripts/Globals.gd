@@ -11,8 +11,8 @@ const CAMERA_ZOOM_EXTENTS_MIN : float = 0.75
 const CAMERA_ZOOM_EXTENTS_MAX : float = 1.5
 
 const COLOURS : Array = [
-	Color(1.0, 0.0, 0.0, 0.1875),
-	Color(0.0, 0.0, 1.0, 0.1875)
+	Color(1.0, 0.0, 0.0, 1.0),
+	Color(0.0, 0.0, 1.0, 1.0)
 ]
 
 const UNIT_NAMES : Array = [

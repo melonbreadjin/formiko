@@ -1,12 +1,12 @@
 extends Node
 class_name Game
 
-onready var unit = preload("res://Entities/Unit.tscn")
+onready var unit = preload("res://Scenes/Unit.tscn")
 
 var tilemap : TileMap
 var tileset : TileSet
 
-var unit_map : Array
+var unit_map : UnitMap
 var yield_map : Array
 
 var players : Array
@@ -17,13 +17,44 @@ var player_count : int
 
 var _sgn
 
+class UnitMap:
+	class Tile:
+		var unit_instances : Array = []
+		var unit_handler : Array = []
+		var unit_count : Array = []
+		
+		func add_unit_to_tile(unit : Unit) -> void:
+			var handle : Array = [unit.unit_type, unit.movement]
+			var index : int = unit_handler.find(handle)
+			
+			if index != -1:
+				unit_count[index] += 1
+			else:
+				unit_instances.append(unit)
+				unit_handler.append(handle)
+				unit_count.append(1)
+	
+	var data : Array
+	
+	func init() -> void:
+		data.clear()
+		
+		for y in Globals.world_size.y:
+			data.append([])
+			
+			for x in Globals.world_size.x:
+				var tile = Tile.new()
+				data[y].append(tile)
+
 class Player:
 	var name : String
 	var is_bot : bool
 	var colour : Color
 	var node : Node2D
 	
-	var units : Dictionary = {
+	var units : Array = []
+	
+	var unit_count : Dictionary = {
 		Globals.unit_type.ANT_WORKER : 0,
 		Globals.unit_type.ANT_SOLDIER : 0,
 		Globals.unit_type.ANT_QUEEN : 0
@@ -40,7 +71,7 @@ class Player:
 	}
 	
 	func _to_string():
-		return "[name : %s, is_bot : %s, colour : %s, units : %s]" % [name, is_bot, colour, units]
+		return "[name : %s, is_bot : %s, colour : %s, units : %s]" % [name, is_bot, colour, unit_count]
 
 func _ready() -> void:
 	tilemap = $World/TileMap
@@ -81,6 +112,9 @@ func init_players() -> void:
 		players[players.find(player)].node = node
 		$World/Entities.add_child(node)
 	
+	init_units()
+
+func init_units() -> void:
 	var spawn_points : Array = init_spawn_points()
 	
 	for index in range(spawn_points.size()):
@@ -88,6 +122,7 @@ func init_players() -> void:
 			for _i in range(Globals.starting_units[entry]):
 				var instance = unit.instance()
 				
+				instance.player = index
 				instance.unit_type = Globals.starting_units.keys()[entry]
 				instance.tile_pos = spawn_points[index]
 				instance.name = Globals.UNIT_NAMES[instance.unit_type]
@@ -96,10 +131,13 @@ func init_players() -> void:
 				instance.get_node("Sprite").region_rect.position.y = Globals.ANT_SPRITE_SIZE * instance.unit_type
 				instance.get_node("Sprite").modulate = players[index].colour
 				
-				unit_map[spawn_points[index].y][spawn_points[index].x].append(instance)
+				instance.init_unit()
 				
-				players[index].units[Globals.starting_units.keys()[entry]] += 1
+				unit_map.data[spawn_points[index].y][spawn_points[index].x].add_unit_to_tile(instance)
+				
+				players[index].unit_count[Globals.starting_units.keys()[entry]] += 1
 				players[index].node.add_child(instance)
+				players[index].units.append(instance)
 
 func init_spawn_points() -> PoolVector2Array:
 	var indeces : Array = []
@@ -147,7 +185,7 @@ func _unhandled_input(event : InputEvent) -> void:
 			})
 
 func get_units_in_tile(pos : Vector2) -> Array:
-	return unit_map[pos.y][pos.x]
+	return unit_map.data[pos.y][pos.x]
 
 func _unhandled_key_input(event : InputEventKey) -> void:
 	if "dev" in Globals.BUILD and event.scancode == KEY_F1 and event.pressed:
@@ -159,13 +197,13 @@ func create_world(rnd_seed : int) -> void:
 	Globals.emit_signal("update_seed", game_seed)
 	randomize()
 	
+	unit_map = UnitMap.new()
+	unit_map.init()
+	
 	for y in Globals.world_size.y:
 		yield_map.append([])
-		unit_map.append([])
 		
 		for x in Globals.world_size.x:
-			unit_map[y].append([])
-			
 			var i = randf()
 			
 			if i < Globals.worldgen_parameters["CHANCE_GRASS"]:
