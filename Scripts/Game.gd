@@ -82,7 +82,26 @@ func _ready() -> void:
 	randomize()
 	new_game()
 
+func reset() -> void:
+	Globals.emit_signal("reset_ui")
+	
+	for child in $World/Entities.get_children():
+		$World/Entities.remove_child(child)
+		child.queue_free()
+	
+	for player_node in $World/Entities.get_children():
+		for unit_node in player_node.get_children():
+			player_node.remove_child(unit_node)
+			unit_node.queue_free()
+		
+		$World/Entities.remove_child(player_node)
+		player_node.queue_free()
+	
+	yield_map.clear()
+	players.clear()
+
 func new_game() -> void:
+	reset()
 	create_world(randi())
 	
 	for i in range(Globals.player_count + Globals.bot_count):
@@ -116,6 +135,10 @@ func init_players() -> void:
 
 func init_units() -> void:
 	var spawn_points : Array = init_spawn_points()
+	
+	$Camera.position = spawn_points[0] * Globals.BLOCK_SIZE + \
+		Vector2(Globals.BLOCK_SIZE / 2.0, Globals.BLOCK_SIZE / 2.0) - \
+		$Camera.get_viewport_rect().size / 2.0
 	
 	for index in range(spawn_points.size()):
 		for entry in Globals.starting_units:
@@ -189,7 +212,7 @@ func get_units_in_tile(pos : Vector2) -> Array:
 
 func _unhandled_key_input(event : InputEventKey) -> void:
 	if "dev" in Globals.BUILD and event.scancode == KEY_F1 and event.pressed:
-		create_world(randi())
+		new_game()
 
 func create_world(rnd_seed : int) -> void:
 	game_seed = rnd_seed

@@ -13,6 +13,7 @@ func _ready() -> void:
 	_sgn = Globals.connect("highlight_tile", self, "on_highlight_tile")
 	_sgn = Globals.connect("toggle_sidebar", self, "on_toggle_sidebar")
 	_sgn = Globals.connect("update_turn", self, "on_update_turn")
+	_sgn = Globals.connect("reset_ui", self, "on_reset_ui")
 	
 	$Sidebar.rect_position.y = get_viewport().size.y
 
@@ -46,6 +47,7 @@ func on_toggle_sidebar(info : Dictionary) -> void:
 	if is_sidebar_active or info.size() == 0:
 		for child in $Sidebar/Container/UnitDetails.get_children():
 			$Sidebar/Container/UnitDetails.remove_child(child)
+			child.queue_free()
 		
 		is_sidebar_active = false
 	else:
@@ -95,6 +97,9 @@ func update_hud(data : Game.Player):
 		2 if fmod(data.added_resources[Globals.resource.FOOD], 1) else 0,
 		data.added_resources[Globals.resource.FOOD]
 	]
+
+func on_reset_ui() -> void:
+	is_sidebar_active = false
 
 func _on_EndTurnButton_pressed() -> void:
 	Globals.emit_signal("end_turn")
