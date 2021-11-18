@@ -58,8 +58,14 @@ func on_toggle_sidebar(info : Dictionary) -> void:
 			
 			instance.get_node("UnitImage").texture.region.position.y = Globals.ANT_SPRITE_SIZE * info.units.unit_handler[index][0]
 			instance.get_node("UnitImage").modulate = Globals.COLOURS[info.units.unit_instances[index].player]
+			instance.get_node("UnitCount").text = "%d" % info.units.unit_count[index]
 			
 			$Sidebar/Container/UnitDetails.add_child(instance)
+		
+		if $Sidebar/Container/UnitDetails.get_child_count() == 0:
+			$Sidebar/Container/UnitInfo.visible = false
+		else:
+			$Sidebar/Container/UnitInfo.visible = true
 		
 		is_sidebar_active = true
 
@@ -67,7 +73,7 @@ func _process(_delta : float) -> void:
 	var target : float
 	
 	if is_sidebar_active:
-		target = get_viewport().size.y - 192.0
+		target = get_viewport().size.y - 192.0 + (96.0 if $Sidebar/Container/UnitDetails.get_child_count() == 0 else 0.0)
 	else:
 		target = get_viewport().size.y
 	
