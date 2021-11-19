@@ -4,6 +4,7 @@ onready var unit_detail = preload("res://Scenes/UnitDetail.tscn")
 
 var _sgn
 var is_sidebar_active = false
+var is_unitselection_active = false
 
 var prev_pos : Vector2
 var prev_off : Vector2
@@ -12,13 +13,14 @@ func _ready() -> void:
 	_sgn = Globals.connect("update_seed", self, "on_update_seed")
 	_sgn = Globals.connect("highlight_tile", self, "on_highlight_tile")
 	_sgn = Globals.connect("toggle_sidebar", self, "on_toggle_sidebar")
+	_sgn = Globals.connect("select_unit", self, "on_select_unit")
 	_sgn = Globals.connect("update_turn", self, "on_update_turn")
 	_sgn = Globals.connect("reset_ui", self, "on_reset_ui")
 	
 	$Sidebar.rect_position.y = get_viewport().size.y
 
 func on_update_seed(rnd_seed) -> void:
-	$SeedLabel.text = "Seed: %d" % rnd_seed
+	$Debug/SeedLabel.text = "Seed: %d" % rnd_seed
 
 func on_highlight_tile(pos, off, zoom) -> void:
 	if pos == null:
@@ -50,6 +52,7 @@ func on_toggle_sidebar(info : Dictionary) -> void:
 			child.queue_free()
 		
 		is_sidebar_active = false
+		is_unitselection_active = false
 	else:
 		$Sidebar/Container/TileInfo/TileNameLabel.text = info.tile_name
 		$Sidebar/Container/TileInfo/TileImage.texture.region.position = info.tile_region.position
@@ -58,7 +61,9 @@ func on_toggle_sidebar(info : Dictionary) -> void:
 		for index in range(info.units.unit_handler.size()):
 			var instance = unit_detail.instance()
 			
-			instance.get_node("UnitImage").texture.region.position.y = Globals.ANT_SPRITE_SIZE * info.units.unit_handler[index][0]
+			instance.unit_detail = info.units.unit_instances[index]
+			
+			instance.get_node("UnitImage").texture_normal.region.position.y = Globals.ANT_SPRITE_SIZE * info.units.unit_handler[index][0]
 			instance.get_node("UnitImage").modulate = Globals.COLOURS[info.units.unit_instances[index].player]
 			instance.get_node("UnitCount").text = "%d" % info.units.unit_count[index]
 			
@@ -72,21 +77,30 @@ func on_toggle_sidebar(info : Dictionary) -> void:
 		is_sidebar_active = true
 
 func _process(_delta : float) -> void:
-	var target : float
+	var sidebar_target : float
+	var unitsel_target : float
 	
-	if is_sidebar_active:
-		target = get_viewport().size.y - $Sidebar/Container/PositionControl.rect_position.y - $Sidebar/Container/PositionControl.rect_size.y
+	if is_sidebar_active and not is_unitselection_active:
+		sidebar_target = get_viewport().size.y - $Sidebar/Container/PositionControl.rect_position.y - $Sidebar/Container/PositionControl.rect_size.y
 	else:
-		target = get_viewport().size.y
+		sidebar_target = get_viewport().size.y
 	
-	if $Sidebar.rect_position.y != target:
-		$Sidebar.rect_position.y = lerp($Sidebar.rect_position.y, target, 0.25)
+	if is_unitselection_active:
+		unitsel_target = get_viewport().size.y - $UnitSelection/Container/PositionControl.rect_position.y - $UnitSelection/Container/PositionControl.rect_size.y
+	else:
+		unitsel_target = get_viewport().size.y
+	
+	if $Sidebar.rect_position.y != sidebar_target:
+		$Sidebar.rect_position.y = lerp($Sidebar.rect_position.y, sidebar_target, 0.25)
+	
+	if $UnitSelection.rect_position.y != unitsel_target:
+		$UnitSelection.rect_position.y = lerp($UnitSelection.rect_position.y, unitsel_target, 0.25)
 
 func on_update_turn(player : int, player_name : String, data : Game.Player) -> void:
 	if player == 0:
 		update_hud(data)
 	
-	$TurnLabel.text = "Turn : %s" % player_name
+	$Debug/TurnLabel.text = "Turn : %s" % player_name
 
 func update_hud(data : Game.Player):
 	$Data/FoodData/VBoxContainer/FoodLabel.bbcode_text = "%0.*f [color=%s](%c%0.*f)[/color]" % [
@@ -100,6 +114,10 @@ func update_hud(data : Game.Player):
 
 func on_reset_ui() -> void:
 	is_sidebar_active = false
+	is_unitselection_active = false
+
+func on_select_unit(unit : Unit, unit_image : int, unit_count : int) -> void:
+	is_unitselection_active = true
 
 func _on_EndTurnButton_pressed() -> void:
 	Globals.emit_signal("end_turn")

@@ -35,6 +35,7 @@ enum resource{
 signal highlight_tile(pos, off, zoom)
 signal update_seed(rnd_seed)
 
+signal select_unit(unit, unit_image, unit_count)
 signal update_turn(player, player_name, data)
 signal end_turn()
 
