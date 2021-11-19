@@ -75,7 +75,7 @@ func _process(_delta : float) -> void:
 	var target : float
 	
 	if is_sidebar_active:
-		target = get_viewport().size.y - 192.0 + (96.0 if $Sidebar/Container/UnitDetails.get_child_count() == 0 else 0.0)
+		target = get_viewport().size.y - $Sidebar/Container/PositionControl.rect_position.y - $Sidebar/Container/PositionControl.rect_size.y
 	else:
 		target = get_viewport().size.y
 	

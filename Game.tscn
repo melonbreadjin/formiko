@@ -251,7 +251,7 @@ __meta__ = {
 
 [node name="TileInfo" type="HBoxContainer" parent="CanvasLayer/Sidebar/Container"]
 visible = false
-margin_right = 484.0
+margin_right = 343.0
 margin_bottom = 64.0
 custom_constants/separation = 64
 
@@ -341,6 +341,15 @@ margin_bottom = 84.0
 custom_constants/vseparation = 32
 custom_constants/hseparation = 28
 columns = 4
+
+[node name="PositionControl" type="Control" parent="CanvasLayer/Sidebar/Container"]
+margin_top = 100.0
+margin_right = 343.0
+margin_bottom = 132.0
+rect_min_size = Vector2( 0, 32 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Panel" type="NinePatchRect" parent="CanvasLayer"]
 anchor_left = 1.0
