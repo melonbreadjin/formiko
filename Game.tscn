@@ -227,8 +227,9 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -408.0
-margin_top = -600.0
+margin_top = 360.0
 margin_right = 1.59998
+margin_bottom = 960.0
 grow_horizontal = 0
 grow_vertical = 0
 __meta__ = {
@@ -370,8 +371,9 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -408.0
-margin_top = -600.0
+margin_top = 360.0
 margin_right = 1.59998
+margin_bottom = 960.0
 grow_horizontal = 0
 grow_vertical = 0
 __meta__ = {
@@ -450,6 +452,8 @@ margin_bottom = 38.0
 rect_min_size = Vector2( 64, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 4
+value = 1.0
+custom_step = 1.0
 
 [node name="ButtonContainer" type="HBoxContainer" parent="CanvasLayer/UnitSelection/Container"]
 margin_top = 116.0
@@ -498,12 +502,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Remove10Button" type="ToolButton" parent="CanvasLayer/UnitSelection/Container/ButtonContainer/Panel2"]
+[node name="RemoveHalfButton" type="ToolButton" parent="CanvasLayer/UnitSelection/Container/ButtonContainer/Panel2"]
 margin_right = 178.0
 margin_bottom = 89.0
 rect_scale = Vector2( 0.45, 0.45 )
 custom_fonts/font = ExtResource( 10 )
-text = "-10"
+text = "-HALF"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -523,12 +527,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Add10Button" type="ToolButton" parent="CanvasLayer/UnitSelection/Container/ButtonContainer/Panel3"]
+[node name="AddHalfButton" type="ToolButton" parent="CanvasLayer/UnitSelection/Container/ButtonContainer/Panel3"]
 margin_right = 178.0
 margin_bottom = 89.0
 rect_scale = Vector2( 0.45, 0.45 )
 custom_fonts/font = ExtResource( 10 )
-text = "+10"
+text = "+HALF"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -664,4 +668,9 @@ anchor_mode = 0
 current = true
 script = ExtResource( 3 )
 
+[connection signal="value_changed" from="CanvasLayer/UnitSelection/Container/SelectorContainer/HScrollBar" to="CanvasLayer" method="_on_HScrollBar_value_changed"]
+[connection signal="pressed" from="CanvasLayer/UnitSelection/Container/ButtonContainer/Panel/RemoveAllButton" to="CanvasLayer" method="_on_RemoveAllButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/UnitSelection/Container/ButtonContainer/Panel2/RemoveHalfButton" to="CanvasLayer" method="_on_RemoveHalfButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/UnitSelection/Container/ButtonContainer/Panel3/AddHalfButton" to="CanvasLayer" method="_on_AddHalfButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/UnitSelection/Container/ButtonContainer/Panel4/AddAllButton" to="CanvasLayer" method="_on_AddAllButton_pressed"]
 [connection signal="pressed" from="CanvasLayer/Panel/EndTurnButton" to="CanvasLayer" method="_on_EndTurnButton_pressed"]

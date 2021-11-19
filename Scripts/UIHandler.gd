@@ -117,7 +117,36 @@ func on_reset_ui() -> void:
 	is_unitselection_active = false
 
 func on_select_unit(unit : Unit, unit_image : int, unit_count : int) -> void:
+	$UnitSelection/Container/SelectorContainer/TextureRect.self_modulate = Globals.COLOURS[unit.player]
+	$UnitSelection/Container/SelectorContainer/TextureRect.texture.region.position.y = unit_image
+	$UnitSelection/Container/SelectorContainer/TextureRect/UnitCount.text = "%d" % unit_count
+	
+	$UnitSelection/Container/SelectorContainer/HScrollBar.max_value = unit_count
+	$UnitSelection/Container/SelectorContainer/HScrollBar.value = unit_count
+	
 	is_unitselection_active = true
 
 func _on_EndTurnButton_pressed() -> void:
 	Globals.emit_signal("end_turn")
+
+func update_display_value(value : int) -> void:
+	$UnitSelection/Container/SelectorContainer/TextureRect/UnitCount.text = "%d" % value
+
+func _on_HScrollBar_value_changed(value):
+	update_display_value(value)
+
+func _on_RemoveAllButton_pressed() -> void:
+	$UnitSelection/Container/SelectorContainer/HScrollBar.value = 0
+
+func _on_RemoveHalfButton_pressed() -> void:
+	var value = $UnitSelection/Container/SelectorContainer/HScrollBar.value
+	value -= value / 2
+	$UnitSelection/Container/SelectorContainer/HScrollBar.value = int(value)
+
+func _on_AddHalfButton_pressed() -> void:
+	var value = $UnitSelection/Container/SelectorContainer/HScrollBar.value
+	value += value / 2
+	$UnitSelection/Container/SelectorContainer/HScrollBar.value = int(value)
+
+func _on_AddAllButton_pressed() -> void:
+	$UnitSelection/Container/SelectorContainer/HScrollBar.value = $UnitSelection/Container/SelectorContainer/HScrollBar.max_value
