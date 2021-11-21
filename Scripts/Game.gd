@@ -15,6 +15,12 @@ var game_seed : int
 var active_player : int
 var player_count : int
 
+var is_unit_dragging : bool
+var unit_drag_instance : Unit
+var unit_drag_position : Vector2
+var unit_drag_handler : Array
+var unit_drag_count : int
+
 var _sgn
 
 class UnitMap:
@@ -23,16 +29,30 @@ class UnitMap:
 		var unit_handler : Array = []
 		var unit_count : Array = []
 		
-		func add_unit_to_tile(unit : Unit) -> void:
+		func add_unit_to_tile(unit : Unit, count : int = 1) -> void:
 			var handle : Array = [unit.unit_type, unit.movement]
 			var index : int = unit_handler.find(handle)
 			
 			if index != -1:
-				unit_count[index] += 1
+				unit_count[index] += count
 			else:
 				unit_instances.append(unit)
 				unit_handler.append(handle)
-				unit_count.append(1)
+				unit_count.append(count)
+		
+		func remove_unit_from_tile(unit : Unit, count : int = 1) -> void:
+			var handle : Array = [unit.unit_type, unit.movement]
+			var index : int = unit_handler.find(handle)
+			
+			if index == -1:
+				return
+			else:
+				if unit_count[index] <= count:
+					unit_instances.remove(index)
+					unit_handler.remove(index)
+					unit_count.remove(index)
+				else:
+					unit_count[index] -= count
 	
 	var data : Array
 	
@@ -78,12 +98,14 @@ func _ready() -> void:
 	tileset = tilemap.tile_set
 	
 	_sgn = Globals.connect("end_turn", self, "on_end_turn")
+	_sgn = Globals.connect("move_unit", self, "on_move_unit")
 	
 	randomize()
 	new_game()
 
 func reset() -> void:
 	Globals.emit_signal("reset_ui")
+	is_unit_dragging = false
 	
 	for child in $World/Entities.get_children():
 		$World/Entities.remove_child(child)
@@ -199,13 +221,17 @@ func _unhandled_input(event : InputEvent) -> void:
 			if pos.x < 0 or pos.y < 0 or pos.x >= Globals.world_size.x or pos.y >= Globals.world_size.y:
 				return
 			
-			Globals.emit_signal("toggle_sidebar", {
-				"tilemap_position" : pos,
-				"tile_name" : tileset.tile_get_name(tilemap.get_cellv(pos)),
-				"tile_region" : tileset.tile_get_region(tilemap.get_cellv(pos)),
-				"tile_yield" : yield_map[pos.y][pos.x],
-				"units" : get_units_in_tile(pos)
-			})
+			if is_unit_dragging:
+				drop_unit(pos)
+			else:
+				Globals.emit_signal("toggle_sidebar", {
+					"tilemap_position" : pos,
+					"tilemap_global_position" : tilemap.map_to_world(pos),
+					"tile_name" : tileset.tile_get_name(tilemap.get_cellv(pos)),
+					"tile_region" : tileset.tile_get_region(tilemap.get_cellv(pos)),
+					"tile_yield" : yield_map[pos.y][pos.x],
+					"units" : get_units_in_tile(pos)
+				})
 
 func get_units_in_tile(pos : Vector2) -> Array:
 	return unit_map.data[pos.y][pos.x]
@@ -260,3 +286,19 @@ func on_end_turn() -> void:
 	
 	Globals.emit_signal("update_turn", active_player, players[active_player].name, players[active_player])
 	active_player = (active_player + 1) % player_count
+
+func on_move_unit(unit_instance : Unit, unit_handler : Array, unit_count : int, pos : Vector2) -> void:
+	unit_drag_instance = unit_instance
+	unit_drag_handler = unit_handler
+	unit_drag_count = unit_count
+	unit_drag_position = pos
+	
+	is_unit_dragging = true
+
+func drop_unit(pos : Vector2) -> void:
+	for unit_instance in unit_map.data[unit_drag_position.y][unit_drag_position.x].unit_instances:
+		if unit_instance == unit_drag_instance:
+			unit_map.data[unit_drag_position.y][unit_drag_position.x].remove_unit_from_tile(unit_drag_instance, unit_drag_count)
+			unit_map.data[pos.y][pos.x].add_unit_to_tile(unit_drag_instance, unit_drag_count)
+	
+	is_unit_dragging = false

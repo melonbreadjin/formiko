@@ -14,7 +14,11 @@ var mouse_pre_drag : Vector2
 var mouse_post_drag : Vector2
 var mouse_drag_delta : Vector2
 
+var _sgn
+
 func _ready() -> void:
+	_sgn = Globals.connect("move_camera_and_pointer", self, "on_move_camera_and_pointer")
+	
 	limit_top = int(-Globals.BLOCK_SIZE * 2)
 	limit_left = int(-Globals.BLOCK_SIZE * 2)
 	limit_right = int(Globals.world_size.x * Globals.BLOCK_SIZE + Globals.BLOCK_SIZE * 2)
@@ -71,3 +75,7 @@ func _process(delta : float) -> void:
 	drag_velocity = Vector2.ZERO
 	
 	Globals.emit_signal("highlight_tile", get_local_mouse_position(), position, zoom)
+
+func on_move_camera_and_pointer(pos : Vector2) -> void:
+	position = pos * Globals.BLOCK_SIZE + Vector2(Globals.BLOCK_SIZE / 2.0, Globals.BLOCK_SIZE / 2.0) - get_viewport_rect().size * zoom / 2.0
+	Input.warp_mouse_position((pos * Globals.BLOCK_SIZE - position + Vector2(Globals.BLOCK_SIZE / 2.0, Globals.BLOCK_SIZE / 2.0)) / zoom)

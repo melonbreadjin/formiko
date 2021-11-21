@@ -562,10 +562,35 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PositionControl" type="Control" parent="CanvasLayer/UnitSelection/Container"]
+[node name="MovePanel" type="NinePatchRect" parent="CanvasLayer/UnitSelection/Container"]
 margin_top = 172.0
 margin_right = 345.0
-margin_bottom = 204.0
+margin_bottom = 212.0
+grow_horizontal = 0
+rect_min_size = Vector2( 80, 40 )
+texture = ExtResource( 6 )
+patch_margin_left = 5
+patch_margin_top = 5
+patch_margin_right = 5
+patch_margin_bottom = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MoveButton" type="ToolButton" parent="CanvasLayer/UnitSelection/Container/MovePanel"]
+margin_right = 767.0
+margin_bottom = 89.0
+rect_scale = Vector2( 0.45, 0.45 )
+custom_fonts/font = ExtResource( 10 )
+text = "Move"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PositionControl" type="Control" parent="CanvasLayer/UnitSelection/Container"]
+margin_top = 228.0
+margin_right = 345.0
+margin_bottom = 260.0
 rect_min_size = Vector2( 0, 32 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -673,4 +698,5 @@ script = ExtResource( 3 )
 [connection signal="pressed" from="CanvasLayer/UnitSelection/Container/ButtonContainer/Panel2/RemoveHalfButton" to="CanvasLayer" method="_on_RemoveHalfButton_pressed"]
 [connection signal="pressed" from="CanvasLayer/UnitSelection/Container/ButtonContainer/Panel3/AddHalfButton" to="CanvasLayer" method="_on_AddHalfButton_pressed"]
 [connection signal="pressed" from="CanvasLayer/UnitSelection/Container/ButtonContainer/Panel4/AddAllButton" to="CanvasLayer" method="_on_AddAllButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/UnitSelection/Container/MovePanel/MoveButton" to="CanvasLayer" method="_on_MoveButton_pressed"]
 [connection signal="pressed" from="CanvasLayer/Panel/EndTurnButton" to="CanvasLayer" method="_on_EndTurnButton_pressed"]

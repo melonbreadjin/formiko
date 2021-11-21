@@ -6,6 +6,11 @@ var _sgn
 var is_sidebar_active = false
 var is_unitselection_active = false
 
+var active_handler : Array
+var selected_unit : Unit
+var highlighted_tile : Vector2
+var highlighted_tile_global : Vector2
+
 var prev_pos : Vector2
 var prev_off : Vector2
 
@@ -45,15 +50,21 @@ func on_highlight_tile(pos, off, zoom) -> void:
 	prev_pos = pos
 	prev_off = off
 
+func reset_sidebar():
+	for child in $Sidebar/Container/UnitDetails.get_children():
+		$Sidebar/Container/UnitDetails.remove_child(child)
+		child.queue_free()
+	
+	is_sidebar_active = false
+	is_unitselection_active = false
+
 func on_toggle_sidebar(info : Dictionary) -> void:
 	if is_sidebar_active or info.size() == 0:
-		for child in $Sidebar/Container/UnitDetails.get_children():
-			$Sidebar/Container/UnitDetails.remove_child(child)
-			child.queue_free()
-		
-		is_sidebar_active = false
-		is_unitselection_active = false
+		reset_sidebar()
 	else:
+		highlighted_tile = info.tilemap_position
+		highlighted_tile_global = info.tilemap_global_position
+		
 		$Sidebar/Container/TileInfo/TileNameLabel.text = info.tile_name
 		$Sidebar/Container/TileInfo/TileImage.texture.region.position = info.tile_region.position
 		$Sidebar/Container/YieldInfo/YieldData/YieldCountLabel.text = "%.2f" % info.tile_yield
@@ -61,6 +72,7 @@ func on_toggle_sidebar(info : Dictionary) -> void:
 		for index in range(info.units.unit_handler.size()):
 			var instance = unit_detail.instance()
 			
+			instance.unit_handler = info.units.unit_handler[index]
 			instance.unit_detail = info.units.unit_instances[index]
 			
 			instance.get_node("UnitImage").texture_normal.region.position.y = Globals.ANT_SPRITE_SIZE * info.units.unit_handler[index][0]
@@ -116,7 +128,10 @@ func on_reset_ui() -> void:
 	is_sidebar_active = false
 	is_unitselection_active = false
 
-func on_select_unit(unit : Unit, unit_image : int, unit_count : int) -> void:
+func on_select_unit(unit : Unit, unit_handler : Array, unit_image : int, unit_count : int) -> void:
+	active_handler = unit_handler
+	selected_unit = unit
+	
 	$UnitSelection/Container/SelectorContainer/TextureRect.self_modulate = Globals.COLOURS[unit.player]
 	$UnitSelection/Container/SelectorContainer/TextureRect.texture.region.position.y = unit_image
 	$UnitSelection/Container/SelectorContainer/TextureRect/UnitCount.text = "%d" % unit_count
@@ -150,3 +165,9 @@ func _on_AddHalfButton_pressed() -> void:
 
 func _on_AddAllButton_pressed() -> void:
 	$UnitSelection/Container/SelectorContainer/HScrollBar.value = $UnitSelection/Container/SelectorContainer/HScrollBar.max_value
+
+func _on_MoveButton_pressed():
+	reset_sidebar()
+	
+	Globals.emit_signal("move_camera_and_pointer", highlighted_tile)
+	Globals.emit_signal("move_unit", selected_unit, active_handler, $UnitSelection/Container/SelectorContainer/HScrollBar.value, highlighted_tile)
