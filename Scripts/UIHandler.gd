@@ -5,6 +5,7 @@ onready var unit_detail = preload("res://Scenes/UnitDetail.tscn")
 var _sgn
 var is_sidebar_active = false
 var is_unitselection_active = false
+var is_cancel_active = false
 
 var active_player : int
 
@@ -23,6 +24,7 @@ func _ready() -> void:
 	_sgn = Globals.connect("select_unit", self, "on_select_unit")
 	_sgn = Globals.connect("update_turn", self, "on_update_turn")
 	_sgn = Globals.connect("reset_ui", self, "on_reset_ui")
+	_sgn = Globals.connect("close_cancel_button", self, "on_close_cancel_button")
 	
 	$Sidebar.rect_position.y = get_viewport().size.y
 
@@ -76,6 +78,7 @@ func on_toggle_sidebar(info : Dictionary) -> void:
 			
 			instance.unit_handler = info.units.unit_handler[index]
 			instance.unit_detail = info.units.unit_instances[index]
+			print(instance.unit_detail.tile_pos)
 			
 			instance.get_node("UnitImage").texture_normal.region.position.y = Globals.ANT_SPRITE_SIZE * info.units.unit_handler[index][0]
 			instance.get_node("UnitImage").modulate = Globals.COLOURS[info.units.unit_instances[index].player]
@@ -93,6 +96,8 @@ func on_toggle_sidebar(info : Dictionary) -> void:
 func _process(_delta : float) -> void:
 	var sidebar_target : float
 	var unitsel_target : float
+	var cancel_target : float
+	var end_target : float
 	
 	if is_sidebar_active and not is_unitselection_active:
 		sidebar_target = get_viewport().size.y - $Sidebar/Container/PositionControl.rect_position.y - $Sidebar/Container/PositionControl.rect_size.y
@@ -104,11 +109,24 @@ func _process(_delta : float) -> void:
 	else:
 		unitsel_target = get_viewport().size.y
 	
+	if is_cancel_active:
+		cancel_target = get_viewport().size.y - $CancelPanel/PositionControl.rect_position.y - $CancelPanel/PositionControl.rect_size.y
+		end_target = -64.0
+	else:
+		cancel_target = get_viewport().size.y
+		end_target = $Panel/PositionControl.rect_position.y + $Panel/PositionControl.rect_size.y
+	
 	if $Sidebar.rect_position.y != sidebar_target:
 		$Sidebar.rect_position.y = lerp($Sidebar.rect_position.y, sidebar_target, 0.25)
 	
 	if $UnitSelection.rect_position.y != unitsel_target:
 		$UnitSelection.rect_position.y = lerp($UnitSelection.rect_position.y, unitsel_target, 0.25)
+	
+	if $CancelPanel.rect_position.y != cancel_target:
+		$CancelPanel.rect_position.y = lerp($CancelPanel.rect_position.y, cancel_target, 0.25)
+	
+	if $Panel.rect_position.y != end_target:
+		$Panel.rect_position.y = lerp($Panel.rect_position.y, end_target, 0.25)
 
 func on_update_turn(player : int, player_name : String, data : Game.Player) -> void:
 	if player == 0:
@@ -174,6 +192,13 @@ func _on_AddAllButton_pressed() -> void:
 
 func _on_MoveButton_pressed():
 	reset_sidebar()
+	is_cancel_active = true
 	
 	Globals.emit_signal("move_camera_and_pointer", highlighted_tile)
 	Globals.emit_signal("move_unit", selected_unit, active_handler, $UnitSelection/Container/SelectorContainer/HScrollBar.value, highlighted_tile)
+
+func _on_CancelButton_pressed():
+	is_cancel_active = false
+
+func on_close_cancel_button():
+	is_cancel_active = false

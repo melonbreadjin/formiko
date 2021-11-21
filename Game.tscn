@@ -497,6 +497,7 @@ margin_bottom = 38.0
 rect_min_size = Vector2( 64, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 4
+min_value = 1.0
 value = 1.0
 custom_step = 1.0
 
@@ -672,6 +673,64 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="PositionControl" type="Control" parent="CanvasLayer/Panel"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -2.28882e-05
+margin_top = -10.0
+margin_right = -2.28882e-05
+rect_min_size = Vector2( 0, 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CancelPanel" type="NinePatchRect" parent="CanvasLayer"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -211.26
+margin_top = -42.3481
+margin_right = -158.86
+margin_bottom = -32.3481
+grow_horizontal = 0
+rect_scale = Vector2( 4, 4 )
+texture = ExtResource( 6 )
+patch_margin_left = 5
+patch_margin_top = 5
+patch_margin_right = 5
+patch_margin_bottom = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CancelButton" type="ToolButton" parent="CanvasLayer/CancelPanel"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -52.4
+margin_right = 157.6
+margin_bottom = 40.0
+grow_horizontal = 0
+rect_scale = Vector2( 0.25, 0.25 )
+custom_fonts/font = ExtResource( 9 )
+text = "Cancel"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PositionControl" type="Control" parent="CanvasLayer/CancelPanel"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -2.28882e-05
+margin_top = 20.0
+margin_right = -2.28882e-05
+margin_bottom = 40.0
+grow_vertical = 0
+rect_min_size = Vector2( 0, 20 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Data" type="Control" parent="CanvasLayer"]
 margin_right = 512.0
 margin_bottom = 128.0
@@ -753,3 +812,5 @@ script = ExtResource( 3 )
 [connection signal="pressed" from="CanvasLayer/UnitSelection/Container/ButtonContainer/Panel4/AddAllButton" to="CanvasLayer" method="_on_AddAllButton_pressed"]
 [connection signal="pressed" from="CanvasLayer/UnitSelection/Container/MovePanel/MoveButton" to="CanvasLayer" method="_on_MoveButton_pressed"]
 [connection signal="pressed" from="CanvasLayer/Panel/EndTurnButton" to="CanvasLayer" method="_on_EndTurnButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/CancelPanel/CancelButton" to="." method="_on_CancelButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/CancelPanel/CancelButton" to="CanvasLayer" method="_on_CancelButton_pressed"]

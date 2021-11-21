@@ -39,7 +39,13 @@ class UnitMap:
 			if index != -1:
 				unit_count[index] += count
 			else:
-				unit_instances.append(unit)
+				var new_unit : Unit = Unit.new()
+				new_unit.player = unit.player
+				new_unit.unit_type = unit.unit_type
+				new_unit.movement = unit.movement
+				new_unit.tile_pos = unit.tile_pos
+				
+				unit_instances.append(new_unit)
 				unit_handler.append(handle)
 				unit_count.append(count)
 		
@@ -304,22 +310,25 @@ func on_end_turn() -> void:
 	active_player = (active_player + 1) % player_count
 
 func on_move_unit(unit_instance : Unit, unit_handler : Array, unit_count : int, pos : Vector2) -> void:
-	unit_drag_instance = unit_instance
-	unit_drag_handler = unit_handler
-	unit_drag_count = unit_count
-	unit_drag_position = pos
-	
-	is_unit_dragging = true
+	if is_unit_dragging == false:
+		unit_drag_instance = unit_instance
+		unit_drag_handler = unit_handler
+		unit_drag_count = unit_count
+		unit_drag_position = pos
+		
+		is_unit_dragging = true
 
 func drop_unit(pos : Vector2, dist : int) -> void:
 	tilemap_territory.set_cellv(pos, tileset_territory.find_tile_by_name("team%d" % (active_player + 1)))
 	
-	var new_unit = unit_drag_instance.duplicate()
+	var new_unit : Unit = Unit.new()
 	
 	new_unit.player = unit_drag_instance.player
 	new_unit.unit_type  = unit_drag_instance.unit_type
 	new_unit.movement = unit_drag_instance.movement
 	new_unit.tile_pos = unit_drag_instance.tile_pos
+	
+	print(pos, unit_drag_instance.tile_pos)
 	
 	for unit_instance in unit_map.data[unit_drag_position.y][unit_drag_position.x].unit_instances:
 		if unit_instance == unit_drag_instance:
@@ -351,4 +360,8 @@ func drop_unit(pos : Vector2, dist : int) -> void:
 			
 			new_unit.movement -= dist
 	
+	is_unit_dragging = false
+	Globals.emit_signal("close_cancel_button")
+
+func _on_CancelButton_pressed():
 	is_unit_dragging = false

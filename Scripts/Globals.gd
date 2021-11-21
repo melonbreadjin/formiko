@@ -43,6 +43,7 @@ signal end_turn()
 signal move_camera_and_pointer(pos)
 
 signal reset_ui()
+signal close_cancel_button()
 signal toggle_sidebar(info)
 
 var world_size : Vector2 = Vector2(16, 16)
