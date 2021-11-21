@@ -6,6 +6,9 @@ onready var unit = preload("res://Scenes/Unit.tscn")
 var tilemap : TileMap
 var tileset : TileSet
 
+var tilemap_territory : TileMap
+var tileset_territory : TileSet
+
 var unit_map : UnitMap
 var yield_map : Array
 
@@ -97,6 +100,9 @@ func _ready() -> void:
 	tilemap = $World/TileMap
 	tileset = tilemap.tile_set
 	
+	tilemap_territory = $World/TerritoryMap
+	tileset_territory = tilemap_territory.tile_set
+	
 	_sgn = Globals.connect("end_turn", self, "on_end_turn")
 	_sgn = Globals.connect("move_unit", self, "on_move_unit")
 	
@@ -165,6 +171,8 @@ func init_units() -> void:
 		$Camera.get_viewport_rect().size / 2.0
 	
 	for index in range(spawn_points.size()):
+		tilemap_territory.set_cellv(spawn_points[index], tileset_territory.find_tile_by_name("team%d" % [index + 1]))
+		
 		for entry in Globals.starting_units:
 			for _i in range(Globals.starting_units[entry]):
 				var instance = unit.instance()
@@ -296,6 +304,8 @@ func on_move_unit(unit_instance : Unit, unit_handler : Array, unit_count : int, 
 	is_unit_dragging = true
 
 func drop_unit(pos : Vector2) -> void:
+	tilemap_territory.set_cellv(pos, tileset_territory.find_tile_by_name("team%d" % (active_player + 1)))
+	
 	for unit_instance in unit_map.data[unit_drag_position.y][unit_drag_position.x].unit_instances:
 		if unit_instance == unit_drag_instance:
 			unit_map.data[unit_drag_position.y][unit_drag_position.x].remove_unit_from_tile(unit_drag_instance, unit_drag_count)
