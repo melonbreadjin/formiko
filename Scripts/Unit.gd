@@ -8,6 +8,9 @@ var movement : float
 var tile_pos : Vector2
 
 func init_unit() -> void:
+	$Sprite.texture.region.position.y = Globals.ANT_SPRITE_SIZE * unit_type
+	$Sprite.modulate = Globals.COLOURS[player]
+	
 	match unit_type:
 		Globals.unit_type.ANT_WORKER:
 			movement = 3.0

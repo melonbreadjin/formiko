@@ -142,6 +142,8 @@ func new_game() -> void:
 	player_count = players.size()
 	active_player = 0
 	
+	Globals.emit_signal("update_turn", active_player, players[active_player].name, players[active_player])
+	
 	init_players()
 
 func init_players() -> void:
@@ -173,8 +175,6 @@ func init_units() -> void:
 				instance.name = Globals.UNIT_NAMES[instance.unit_type]
 				
 				instance.position = spawn_points[index] * Globals.BLOCK_SIZE + Vector2(Globals.BLOCK_SIZE / 2.0, Globals.BLOCK_SIZE / 2.0)
-				instance.get_node("Sprite").region_rect.position.y = Globals.ANT_SPRITE_SIZE * instance.unit_type
-				instance.get_node("Sprite").modulate = players[index].colour
 				
 				instance.init_unit()
 				
@@ -300,5 +300,27 @@ func drop_unit(pos : Vector2) -> void:
 		if unit_instance == unit_drag_instance:
 			unit_map.data[unit_drag_position.y][unit_drag_position.x].remove_unit_from_tile(unit_drag_instance, unit_drag_count)
 			unit_map.data[pos.y][pos.x].add_unit_to_tile(unit_drag_instance, unit_drag_count)
+			
+			var player = unit_drag_instance.player
+			var drag_count = unit_drag_count
+			
+			for player_unit in players[player].units:
+				if drag_count > 0:
+					if player_unit.unit_type == unit_drag_instance.unit_type and player_unit.movement == unit_drag_instance.movement:
+						player_unit.tile_pos = pos
+						
+						drag_count -= 1
+				else:
+					break
+			
+			for player_unit in players[player].node.get_children():
+				if unit_drag_count > 0:
+					if player_unit.unit_type == unit_drag_instance.unit_type and player_unit.movement == unit_drag_instance.movement:
+						player_unit.tile_pos = pos
+						player_unit.position = player_unit.tile_pos * Globals.BLOCK_SIZE + Vector2(Globals.BLOCK_SIZE / 2.0, Globals.BLOCK_SIZE / 2.0)
+						
+						unit_drag_count -= 1
+				else:
+					break
 	
 	is_unit_dragging = false

@@ -6,6 +6,8 @@ var _sgn
 var is_sidebar_active = false
 var is_unitselection_active = false
 
+var active_player : int
+
 var active_handler : Array
 var selected_unit : Unit
 var highlighted_tile : Vector2
@@ -112,6 +114,7 @@ func on_update_turn(player : int, player_name : String, data : Game.Player) -> v
 	if player == 0:
 		update_hud(data)
 	
+	active_player = player
 	$Debug/TurnLabel.text = "Turn : %s" % player_name
 
 func update_hud(data : Game.Player):
@@ -129,6 +132,9 @@ func on_reset_ui() -> void:
 	is_unitselection_active = false
 
 func on_select_unit(unit : Unit, unit_handler : Array, unit_image : int, unit_count : int) -> void:
+	if active_player != unit.player:
+		return
+	
 	active_handler = unit_handler
 	selected_unit = unit
 	
