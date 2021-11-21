@@ -229,8 +229,13 @@ func _unhandled_input(event : InputEvent) -> void:
 			if pos.x < 0 or pos.y < 0 or pos.x >= Globals.world_size.x or pos.y >= Globals.world_size.y:
 				return
 			
+			var distance : int = get_tile_distance(pos, unit_drag_position)
+			
 			if is_unit_dragging:
-				drop_unit(pos)
+				if unit_drag_instance.movement < distance or distance == 0:
+					print("too far ", unit_drag_instance.movement)
+				else:
+					drop_unit(pos, distance)
 			else:
 				Globals.emit_signal("toggle_sidebar", {
 					"tilemap_position" : pos,
@@ -240,6 +245,9 @@ func _unhandled_input(event : InputEvent) -> void:
 					"tile_yield" : yield_map[pos.y][pos.x],
 					"units" : get_units_in_tile(pos)
 				})
+
+func get_tile_distance(a : Vector2, b : Vector2) -> int:
+	return int(abs(a.x - b.x) + abs(a.y - b.y))
 
 func get_units_in_tile(pos : Vector2) -> Array:
 	return unit_map.data[pos.y][pos.x]
@@ -303,20 +311,27 @@ func on_move_unit(unit_instance : Unit, unit_handler : Array, unit_count : int, 
 	
 	is_unit_dragging = true
 
-func drop_unit(pos : Vector2) -> void:
+func drop_unit(pos : Vector2, dist : int) -> void:
 	tilemap_territory.set_cellv(pos, tileset_territory.find_tile_by_name("team%d" % (active_player + 1)))
+	
+	var new_unit = unit_drag_instance.duplicate()
+	
+	new_unit.player = unit_drag_instance.player
+	new_unit.unit_type  = unit_drag_instance.unit_type
+	new_unit.movement = unit_drag_instance.movement
+	new_unit.tile_pos = unit_drag_instance.tile_pos
 	
 	for unit_instance in unit_map.data[unit_drag_position.y][unit_drag_position.x].unit_instances:
 		if unit_instance == unit_drag_instance:
 			unit_map.data[unit_drag_position.y][unit_drag_position.x].remove_unit_from_tile(unit_drag_instance, unit_drag_count)
-			unit_map.data[pos.y][pos.x].add_unit_to_tile(unit_drag_instance, unit_drag_count)
+			unit_map.data[pos.y][pos.x].add_unit_to_tile(new_unit, unit_drag_count)
 			
 			var player = unit_drag_instance.player
 			var drag_count = unit_drag_count
 			
 			for player_unit in players[player].units:
 				if drag_count > 0:
-					if player_unit.unit_type == unit_drag_instance.unit_type and player_unit.movement == unit_drag_instance.movement:
+					if player_unit.unit_type == new_unit.unit_type and player_unit.movement == new_unit.movement:
 						player_unit.tile_pos = pos
 						
 						drag_count -= 1
@@ -325,12 +340,15 @@ func drop_unit(pos : Vector2) -> void:
 			
 			for player_unit in players[player].node.get_children():
 				if unit_drag_count > 0:
-					if player_unit.unit_type == unit_drag_instance.unit_type and player_unit.movement == unit_drag_instance.movement:
+					if player_unit.unit_type == new_unit.unit_type and player_unit.movement == new_unit.movement:
 						player_unit.tile_pos = pos
 						player_unit.position = player_unit.tile_pos * Globals.BLOCK_SIZE + Vector2(Globals.BLOCK_SIZE / 2.0, Globals.BLOCK_SIZE / 2.0)
+						player_unit.movement -= dist
 						
 						unit_drag_count -= 1
 				else:
 					break
+			
+			new_unit.movement -= dist
 	
 	is_unit_dragging = false
