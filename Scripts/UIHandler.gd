@@ -78,7 +78,6 @@ func on_toggle_sidebar(info : Dictionary) -> void:
 			
 			instance.unit_handler = info.units.unit_handler[index]
 			instance.unit_detail = info.units.unit_instances[index]
-			print(instance.unit_detail.tile_pos)
 			
 			instance.get_node("UnitImage").texture_normal.region.position.y = Globals.ANT_SPRITE_SIZE * info.units.unit_handler[index][0]
 			instance.get_node("UnitImage").modulate = Globals.COLOURS[info.units.unit_instances[index].player]
