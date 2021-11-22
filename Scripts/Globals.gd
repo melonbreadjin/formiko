@@ -46,6 +46,7 @@ signal reset_ui()
 signal close_cancel_button()
 signal toggle_sidebar(info)
 
+var camera_rect : Rect2
 var world_size : Vector2 = Vector2(16, 16)
 
 var player_count : int = 1

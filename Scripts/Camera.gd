@@ -71,6 +71,8 @@ func _process(delta : float) -> void:
 	position.x = clamp(position.x, limit_left, limit_right - get_viewport().size.x * zoom.x)
 	position.y = clamp(position.y, limit_top, limit_bottom - get_viewport().size.y * zoom.y)
 	
+	Globals.camera_rect = Rect2(position, get_viewport().size * (zoom + Vector2(0.135, 0.135)))
+	
 	drag_direction = Vector2.ZERO
 	drag_velocity = Vector2.ZERO
 	
