@@ -358,6 +358,30 @@ func initiate_combat(pos : Vector2) -> bool:
 			unit_drag_loss = int(power_loss / Globals.power_values[unit_drag_instance.unit_type])
 			unit_drag_count -= unit_drag_loss
 		
+		if power_loss_enemy > 0:
+			var unit_loss_enemy : Array = []
+			
+			for index in range(units.unit_count.size()):
+				var power_share : float = Globals.power_values[units.unit_instances[index].unit_type] * units.unit_count[index] / enemy_power
+				
+				unit_loss_enemy.append(int(player_power * power_share / Globals.power_values[units.unit_instances[index].unit_type]))
+			
+			for index in range(unit_loss_enemy.size()):
+				var player_id : int = units.unit_instances[index].player
+				var player_unit : Array = players[player_id].node.get_children()
+				
+				for player_index in range(players[player_id].units.size()):
+					if unit_loss_enemy[index] == 0:
+						break
+					elif players[player_id].units[index].unit_type == unit_loss_enemy[index] and players[player_id].units[index].tile_pos == pos:
+						var unit_pop : Unit = players[player_id].units.pop_back()
+						player_unit[player_index].remove_child(unit_pop)
+						unit_pop.queue_free()
+						
+						unit_loss_enemy[index] -= 1
+					
+				units.remove_unit_from_tile(units.unit_instances[index], unit_loss_enemy[index])
+		
 		if power_diff > 0:
 			return true
 		else:
