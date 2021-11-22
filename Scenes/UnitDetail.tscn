@@ -46,4 +46,15 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Movement" type="Label" parent="."]
+margin_right = 64.0
+margin_bottom = 20.0
+custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color = Color( 0.223529, 0.486275, 0.745098, 1 )
+text = "N/A"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [connection signal="pressed" from="UnitImage" to="." method="_on_UnitImage_pressed"]

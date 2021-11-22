@@ -32,6 +32,11 @@ class UnitMap:
 		var unit_handler : Array = []
 		var unit_count : Array = []
 		
+		func reset_movement():
+			for index in range(unit_instances.size()):
+				unit_instances[index].reset_movement()
+				unit_handler[index][1] = unit_instances[index].movement
+		
 		func add_unit_to_tile(unit : Unit, count : int = 1) -> void:
 			var handle : Array = [unit.unit_type, unit.movement]
 			var index : int = unit_handler.find(handle)
@@ -255,7 +260,7 @@ func _unhandled_input(event : InputEvent) -> void:
 func get_tile_distance(a : Vector2, b : Vector2) -> int:
 	return int(abs(a.x - b.x) + abs(a.y - b.y))
 
-func get_units_in_tile(pos : Vector2) -> Array:
+func get_units_in_tile(pos : Vector2) -> UnitMap.Tile:
 	return unit_map.data[pos.y][pos.x]
 
 func _unhandled_key_input(event : InputEventKey) -> void:
@@ -306,6 +311,13 @@ func on_end_turn() -> void:
 	players[active_player].resources[Globals.resource.FOOD] += total
 	players[active_player].added_resources[Globals.resource.FOOD] = total
 	
+	for y in range(Globals.world_size.y):
+		for x in range(Globals.world_size.x):
+			get_units_in_tile(Vector2(x, y)).reset_movement()
+	
+	for player_unit in players[active_player].units:
+		player_unit.reset_movement()
+	
 	Globals.emit_signal("update_turn", active_player, players[active_player].name, players[active_player])
 	active_player = (active_player + 1) % player_count
 
@@ -337,9 +349,8 @@ func drop_unit(pos : Vector2, dist : int) -> void:
 			var player_unit : Array = players[player].node.get_children()
 			
 			for index in range(players[player].units.size()):
-				print(players[player].units[index].movement, " ", unit_drag_instance.movement)
 				if unit_drag_count > 0:
-					if players[player].units[index].unit_type == unit_drag_instance.unit_type and players[player].units[index].movement == unit_drag_instance.movement:
+					if players[player].units[index].unit_type == unit_drag_instance.unit_type and players[player].units[index].movement == unit_drag_instance.movement and players[player].units[index].tile_pos == unit_drag_position:
 						players[player].units[index].tile_pos = pos
 						players[player].units[index].movement -= dist
 						player_unit[index].position = player_unit[index].tile_pos * Globals.BLOCK_SIZE + Vector2(Globals.BLOCK_SIZE / 2.0, Globals.BLOCK_SIZE / 2.0)
