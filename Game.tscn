@@ -790,7 +790,6 @@ cell_size = Vector2( 16, 16 )
 format = 1
 
 [node name="TerritoryMap" type="TileMap" parent="World"]
-modulate = Color( 1, 1, 1, 0.501961 )
 scale = Vector2( 8, 8 )
 z_index = 10
 tile_set = SubResource( 9 )

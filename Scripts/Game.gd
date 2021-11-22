@@ -191,7 +191,7 @@ func init_units() -> void:
 		$Camera.get_viewport_rect().size / 2.0
 	
 	for index in range(spawn_points.size()):
-		tilemap_territory.set_cellv(spawn_points[index], tileset_territory.find_tile_by_name("team%d" % [index + 1]))
+		tilemap_territory.set_cellv(spawn_points[index], tileset_territory.find_tile_by_name("%d" % index))
 		
 		for entry in Globals.starting_units:
 			for _i in range(Globals.starting_units[entry]):
