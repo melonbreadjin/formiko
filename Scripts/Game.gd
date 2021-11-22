@@ -404,15 +404,12 @@ func drop_unit(pos : Vector2, dist : int) -> void:
 				unit_map.data[pos.y][pos.x].add_unit_to_tile(new_unit, unit_drag_count)
 				
 				var player : int = unit_drag_instance.player
-				var player_unit : Array = players[player].node.get_children()
 				
 				for index in range(players[player].units.size()):
 					if unit_drag_count > 0:
 						if players[player].units[index].unit_type == unit_drag_instance.unit_type and players[player].units[index].movement == unit_drag_instance.movement and players[player].units[index].tile_pos == unit_drag_position:
-							players[player].units[index].tile_pos = pos
+							players[player].units[index].reposition(pos)
 							players[player].units[index].movement -= dist
-							player_unit[index].position = player_unit[index].tile_pos * Globals.BLOCK_SIZE + Vector2(Globals.BLOCK_SIZE / 2.0, Globals.BLOCK_SIZE / 2.0)
-							
 							
 							unit_drag_count -= 1
 					else:
