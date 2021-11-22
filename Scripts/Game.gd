@@ -318,8 +318,8 @@ func on_end_turn() -> void:
 	for player_unit in players[active_player].units:
 		player_unit.reset_movement()
 	
-	Globals.emit_signal("update_turn", active_player, players[active_player].name, players[active_player])
 	active_player = (active_player + 1) % player_count
+	Globals.emit_signal("update_turn", active_player, players[active_player].name, players[active_player])
 
 func on_move_unit(unit_instance : Unit, unit_handler : Array, unit_count : int, pos : Vector2) -> void:
 	if is_unit_dragging == false:
