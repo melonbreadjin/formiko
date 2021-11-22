@@ -6,7 +6,7 @@ const ANT_SPRITE_SIZE : float = 16.0
 const BLOCK_SIZE : float = 128.0
 const CAMERA_MOVESPEED : float = 5.0
 const CAMERA_DRAGSPEED : float = 2.0
-const CAMERA_ZOOMSPEED : float = 4.0
+const CAMERA_ZOOMSPEED : float = 8.0
 const CAMERA_ZOOM_EXTENTS_MIN : float = 0.75
 const CAMERA_ZOOM_EXTENTS_MAX : float = 1.5
 

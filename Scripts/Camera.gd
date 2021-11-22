@@ -8,6 +8,8 @@ var drag_direction : Vector2
 var move_direction : Vector2
 var zoom_direction : Vector2
 
+var zoom_target : Vector2
+
 var is_camera_dragging : bool = false
 
 var mouse_pre_drag : Vector2
@@ -58,9 +60,9 @@ func _process(delta : float) -> void:
 	if move_direction != Vector2.ZERO:
 		Globals.emit_signal("toggle_sidebar", {})
 	
-	zoom += zoom_direction * Globals.CAMERA_ZOOMSPEED * delta
-	zoom.x = clamp(zoom.x, Globals.CAMERA_ZOOM_EXTENTS_MIN, Globals.CAMERA_ZOOM_EXTENTS_MAX)
-	zoom.y = clamp(zoom.y, Globals.CAMERA_ZOOM_EXTENTS_MIN, Globals.CAMERA_ZOOM_EXTENTS_MAX)
+	zoom_target = zoom + zoom_direction * Globals.CAMERA_ZOOMSPEED * delta
+	zoom.x = clamp(lerp(zoom.x, zoom_target.x, 0.25), Globals.CAMERA_ZOOM_EXTENTS_MIN, Globals.CAMERA_ZOOM_EXTENTS_MAX)
+	zoom.y = clamp(lerp(zoom.y, zoom_target.y, 0.25), Globals.CAMERA_ZOOM_EXTENTS_MIN, Globals.CAMERA_ZOOM_EXTENTS_MAX)
 	zoom_direction = Vector2.ZERO
 	
 	if is_camera_dragging:
