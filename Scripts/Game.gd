@@ -23,6 +23,7 @@ var unit_drag_instance : Unit
 var unit_drag_position : Vector2
 var unit_drag_handler : Array
 var unit_drag_count : int
+var unit_drag_loss : int
 
 var _sgn
 
@@ -32,7 +33,15 @@ class UnitMap:
 		var unit_handler : Array = []
 		var unit_count : Array = []
 		
-		func reset_movement():
+		func get_tile_power() -> int:
+			var tile_power : int = 0
+			
+			for index in range(unit_count.size()):
+				tile_power += Globals.power_values[unit_instances[index].unit_type] * unit_count[index]
+			
+			return tile_power
+		
+		func reset_movement() -> void:
 			for index in range(unit_instances.size()):
 				unit_instances[index].reset_movement()
 				unit_handler[index][1] = unit_instances[index].movement
@@ -330,40 +339,91 @@ func on_move_unit(unit_instance : Unit, unit_handler : Array, unit_count : int, 
 		
 		is_unit_dragging = true
 
+func initiate_combat(pos : Vector2) -> bool:
+	var units : UnitMap.Tile = get_units_in_tile(pos)
+	
+	if tilemap_territory.get_cellv(pos) != -1 and int(tileset_territory.tile_get_name(tilemap_territory.get_cellv(pos))) == active_player:
+		return true
+	else:
+		var player_power : float = Globals.power_values[unit_drag_instance.unit_type] * unit_drag_count
+		var enemy_power : float = units.get_tile_power()
+		
+		var power_diff : float = player_power - enemy_power
+		var power_loss : float = player_power - power_diff
+		
+		var power_diff_enemy : float = -power_diff
+		var power_loss_enemy : float = enemy_power - power_diff_enemy
+		
+		if power_loss > 0:
+			unit_drag_loss = int(power_loss / Globals.power_values[unit_drag_instance.unit_type])
+			unit_drag_count -= unit_drag_loss
+		
+		if power_diff > 0:
+			return true
+		else:
+			return false
+
 func drop_unit(pos : Vector2, dist : int) -> void:
-	tilemap_territory.set_cellv(pos, tileset_territory.find_tile_by_name("team%d" % (active_player + 1)))
-	
-	var new_unit : Unit = Unit.new()
-	
-	new_unit.player = unit_drag_instance.player
-	new_unit.unit_type  = unit_drag_instance.unit_type
-	new_unit.movement = unit_drag_instance.movement - dist
-	new_unit.tile_pos = unit_drag_instance.tile_pos
-	
-	for unit_instance in unit_map.data[unit_drag_position.y][unit_drag_position.x].unit_instances:
-		if unit_instance == unit_drag_instance:
-			unit_map.data[unit_drag_position.y][unit_drag_position.x].remove_unit_from_tile(unit_drag_instance, unit_drag_count)
-			unit_map.data[pos.y][pos.x].add_unit_to_tile(new_unit, unit_drag_count)
-			
-			var player : int = unit_drag_instance.player
-			var player_unit : Array = players[player].node.get_children()
-			
-			for index in range(players[player].units.size()):
-				if unit_drag_count > 0:
-					if players[player].units[index].unit_type == unit_drag_instance.unit_type and players[player].units[index].movement == unit_drag_instance.movement and players[player].units[index].tile_pos == unit_drag_position:
-						players[player].units[index].tile_pos = pos
-						players[player].units[index].movement -= dist
-						player_unit[index].position = player_unit[index].tile_pos * Globals.BLOCK_SIZE + Vector2(Globals.BLOCK_SIZE / 2.0, Globals.BLOCK_SIZE / 2.0)
-						
-						
-						unit_drag_count -= 1
-				else:
-					break
-			
-			new_unit.movement -= dist
-	
+	if initiate_combat(pos):
+		tilemap_territory.set_cellv(pos, tileset_territory.find_tile_by_name("%d" % active_player))
+		
+		var new_unit : Unit = Unit.new()
+		
+		new_unit.player = unit_drag_instance.player
+		new_unit.unit_type  = unit_drag_instance.unit_type
+		new_unit.movement = unit_drag_instance.movement - dist
+		new_unit.tile_pos = unit_drag_instance.tile_pos
+		
+		for unit_instance in unit_map.data[unit_drag_position.y][unit_drag_position.x].unit_instances:
+			if unit_instance == unit_drag_instance:
+				unit_map.data[unit_drag_position.y][unit_drag_position.x].remove_unit_from_tile(unit_drag_instance, unit_drag_count)
+				unit_map.data[pos.y][pos.x].add_unit_to_tile(new_unit, unit_drag_count)
+				
+				var player : int = unit_drag_instance.player
+				var player_unit : Array = players[player].node.get_children()
+				
+				for index in range(players[player].units.size()):
+					if unit_drag_count > 0:
+						if players[player].units[index].unit_type == unit_drag_instance.unit_type and players[player].units[index].movement == unit_drag_instance.movement and players[player].units[index].tile_pos == unit_drag_position:
+							players[player].units[index].tile_pos = pos
+							players[player].units[index].movement -= dist
+							player_unit[index].position = player_unit[index].tile_pos * Globals.BLOCK_SIZE + Vector2(Globals.BLOCK_SIZE / 2.0, Globals.BLOCK_SIZE / 2.0)
+							
+							
+							unit_drag_count -= 1
+					else:
+						break
+				
+				new_unit.movement -= dist
+		
+		remove_units()
+	else:
+		remove_units()
+		
 	is_unit_dragging = false
 	Globals.emit_signal("close_cancel_button")
+
+func remove_units():
+	unit_map.data[unit_drag_position.y][unit_drag_position.x].remove_unit_from_tile(unit_drag_instance, unit_drag_loss)
+	
+	var player : int = unit_drag_instance.player
+	var player_unit : Array = players[player].node.get_children()
+	var units_to_remove : Array = []
+	
+	for index in range(players[player].units.size()):
+		if unit_drag_loss > 0:
+			if players[player].units[index].unit_type == unit_drag_instance.unit_type and players[player].units[index].movement == unit_drag_instance.movement and players[player].units[index].tile_pos == unit_drag_position:
+				units_to_remove.append(index)
+				unit_drag_loss -= 1
+		else:
+			break
+	
+	for index in range(units_to_remove.size()):
+		var s : int = units_to_remove.size()
+		players[player].units.remove(units_to_remove[s - index - 1])
+		
+		players[player].node.remove_child(player_unit[units_to_remove[s - index - 1]])
+		player_unit[units_to_remove[s - index - 1]].queue_free()
 
 func _on_CancelButton_pressed():
 	is_unit_dragging = false

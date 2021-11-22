@@ -176,7 +176,7 @@ region = Rect2( 0, 32, 32, 32 )
 9/z_index = 0
 
 [sub_resource type="TileSet" id=9]
-0/name = "team1"
+0/name = "0"
 0/texture = ExtResource( 12 )
 0/tex_offset = Vector2( 0, 0 )
 0/modulate = Color( 1, 1, 1, 1 )
@@ -190,7 +190,7 @@ region = Rect2( 0, 32, 32, 32 )
 0/shape_one_way_margin = 0.0
 0/shapes = [  ]
 0/z_index = 0
-1/name = "team2"
+1/name = "1"
 1/texture = ExtResource( 12 )
 1/tex_offset = Vector2( 0, 0 )
 1/modulate = Color( 1, 1, 1, 1 )
@@ -204,7 +204,7 @@ region = Rect2( 0, 32, 32, 32 )
 1/shape_one_way_margin = 0.0
 1/shapes = [  ]
 1/z_index = 0
-2/name = "team3"
+2/name = "2"
 2/texture = ExtResource( 12 )
 2/tex_offset = Vector2( 0, 0 )
 2/modulate = Color( 1, 1, 1, 1 )
