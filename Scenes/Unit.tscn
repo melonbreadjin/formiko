@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Scripts/Unit.gd" type="Script" id=1]
 [ext_resource path="res://Assets/ants.png" type="Texture" id=2]
@@ -15,11 +15,28 @@ region = Rect2( 32, 0, 16, 16 )
 atlas = ExtResource( 2 )
 region = Rect2( 48, 0, 16, 16 )
 
+[sub_resource type="AtlasTexture" id=5]
+atlas = ExtResource( 2 )
+region = Rect2( 16, 16, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=6]
+atlas = ExtResource( 2 )
+region = Rect2( 32, 16, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=7]
+atlas = ExtResource( 2 )
+region = Rect2( 48, 16, 16, 16 )
+
 [sub_resource type="SpriteFrames" id=4]
 animations = [ {
 "frames": [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ) ],
 "loop": true,
 "name": "walk_worker",
+"speed": 3.0
+}, {
+"frames": [ SubResource( 5 ), SubResource( 6 ), SubResource( 7 ) ],
+"loop": true,
+"name": "walk_soldier",
 "speed": 3.0
 } ]
 
@@ -29,13 +46,21 @@ script = ExtResource( 1 )
 [node name="Sprite" type="AnimatedSprite" parent="."]
 scale = Vector2( 2, 2 )
 frames = SubResource( 4 )
-animation = "walk_worker"
-frame = 2
+animation = "walk_soldier"
 speed_scale = 0.0
 playing = true
 
 [node name="Timer" type="Timer" parent="."]
 process_mode = 0
 autostart = true
+
+[node name="PositionControl" type="Control" parent="Timer"]
+margin_top = 228.0
+margin_right = 345.0
+margin_bottom = 260.0
+rect_min_size = Vector2( 0, 32 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

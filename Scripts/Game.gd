@@ -21,6 +21,7 @@ var player_count : int
 var is_unit_dragging : bool
 var unit_drag_instance : Unit
 var unit_drag_position : Vector2
+var unit_drop_position : Vector2
 var unit_drag_handler : Array
 var unit_drag_count : int
 var unit_drag_loss : int
@@ -291,6 +292,8 @@ func create_world(rnd_seed : int) -> void:
 		for x in Globals.world_size.x:
 			var i = randf()
 			
+			tilemap_territory.set_cell(x, y, -1)
+			
 			if i < Globals.worldgen_parameters["CHANCE_GRASS"]:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("grass_%d" % (randi() % 3 + 1)))
 				yield_map[y].append(Globals.food_yields["grass"])
@@ -360,25 +363,27 @@ func initiate_combat(pos : Vector2) -> bool:
 		
 		if power_loss_enemy > 0:
 			var unit_loss_enemy : Array = []
+			var unit_loss_type_enemy : Array = []
 			
 			for index in range(units.unit_count.size()):
 				var power_share : float = Globals.power_values[units.unit_instances[index].unit_type] * units.unit_count[index] / enemy_power
 				
 				unit_loss_enemy.append(int(player_power * power_share / Globals.power_values[units.unit_instances[index].unit_type]))
+				unit_loss_type_enemy.append(units.unit_instances[index].unit_type)
 			
 			for index in range(unit_loss_enemy.size()):
 				var player_id : int = units.unit_instances[index].player
-				var player_unit : Array = players[player_id].node.get_children()
+				var loss_count : int = unit_loss_enemy[index]
 				
 				for player_index in range(players[player_id].units.size()):
-					if unit_loss_enemy[index] == 0:
+					if loss_count == 0:
 						break
-					elif players[player_id].units[index].unit_type == unit_loss_enemy[index] and players[player_id].units[index].tile_pos == pos:
-						var unit_pop : Unit = players[player_id].units.pop_back()
-						player_unit[player_index].remove_child(unit_pop)
+					elif players[player_id].units[player_index].unit_type == unit_loss_type_enemy[index] and players[player_id].units[player_index].tile_pos == pos:
+						var unit_pop : Unit = players[player_id].units[player_index] 
+						players[player_id].units.remove(player_index)
 						unit_pop.queue_free()
 						
-						unit_loss_enemy[index] -= 1
+						loss_count -= 1
 					
 				units.remove_unit_from_tile(units.unit_instances[index], unit_loss_enemy[index])
 		
@@ -388,6 +393,8 @@ func initiate_combat(pos : Vector2) -> bool:
 			return false
 
 func drop_unit(pos : Vector2, dist : int) -> void:
+	unit_drop_position = pos
+	
 	if initiate_combat(pos):
 		tilemap_territory.set_cellv(pos, tileset_territory.find_tile_by_name("%d" % active_player))
 		
@@ -434,6 +441,7 @@ func remove_units():
 	for index in range(players[player].units.size()):
 		if unit_drag_loss > 0:
 			if players[player].units[index].unit_type == unit_drag_instance.unit_type and players[player].units[index].movement == unit_drag_instance.movement and players[player].units[index].tile_pos == unit_drag_position:
+				#players[player].units[index].reposition(unit_drop_position)
 				units_to_remove.append(index)
 				unit_drag_loss -= 1
 		else:

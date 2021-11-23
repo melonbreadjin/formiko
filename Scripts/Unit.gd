@@ -18,19 +18,24 @@ var roam_speed : float
 func init_unit() -> void:
 	center_pos = tile_pos * Globals.BLOCK_SIZE + Vector2(Globals.BLOCK_SIZE / 2, Globals.BLOCK_SIZE / 2)
 	
+	rng = RandomNumberGenerator.new()
+	rng.randomize()
+	
 	match unit_type:
 		Globals.unit_type.ANT_WORKER:
 			$Sprite.animation = "walk_worker"
+			$Sprite.speed_scale = rng.randf_range(4, 4.5)
+			roam_speed = 16.0
 		Globals.unit_type.ANT_SOLDIER:
-			movement = 2.0
+			$Sprite.animation = "walk_soldier"
+			$Sprite.speed_scale = rng.randf_range(3, 3.5)
+			roam_speed = 12.0
 		Globals.unit_type.ANT_QUEEN:
-			movement = 1.0
+			$Sprite.speed_scale = rng.randf_range(2, 2.5)
+			roam_speed = 4.0
 	
-	rng = RandomNumberGenerator.new()
-	rng.randomize()
 	target_rot = rng.randf_range(0, 2 * PI)
 	
-	$Sprite.speed_scale = rng.randf_range(4, 4.5)
 	$Sprite.modulate = Globals.COLOURS[player]
 	
 	$Timer.wait_time = rng.randf_range(0, 1)
@@ -43,7 +48,7 @@ func init_unit() -> void:
 func reset_movement() -> void:
 	match unit_type:
 		Globals.unit_type.ANT_WORKER:
-			movement = 3.0
+			movement = 30.0
 		Globals.unit_type.ANT_SOLDIER:
 			movement = 2.0
 		Globals.unit_type.ANT_QUEEN:
@@ -66,7 +71,13 @@ func _physics_process(delta : float) -> void:
 		if is_repositioning:
 			is_repositioning = false
 			$Timer.start(0.1)
-		roam_speed = 16.0
+		match unit_type:
+			Globals.unit_type.ANT_WORKER:
+				roam_speed = 16.0
+			Globals.unit_type.ANT_SOLDIER:
+				roam_speed = 12.0
+			Globals.unit_type.ANT_QUEEN:
+				roam_speed = 4.0
 	
 	rotation = lerp_angle(rotation, target_rot, 0.05)
 	position += Vector2(cos(rotation - PI / 4), sin(rotation - PI / 4)).normalized() * roam_speed * delta
