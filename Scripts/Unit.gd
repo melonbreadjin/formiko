@@ -48,7 +48,7 @@ func init_unit() -> void:
 func reset_movement() -> void:
 	match unit_type:
 		Globals.unit_type.ANT_WORKER:
-			movement = 30.0
+			movement = 3.0
 		Globals.unit_type.ANT_SOLDIER:
 			movement = 2.0
 		Globals.unit_type.ANT_QUEEN:
@@ -96,3 +96,7 @@ func _on_Timer_timeout() -> void:
 	else:
 		$Timer.wait_time = rng.randf_range(0, 1)
 	$Timer.start()
+
+func despawn() -> void:
+	yield(get_tree().create_timer(5.0), "timeout")
+	queue_free()

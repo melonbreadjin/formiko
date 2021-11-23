@@ -358,7 +358,7 @@ func initiate_combat(pos : Vector2) -> bool:
 		var power_loss_enemy : float = enemy_power - power_diff_enemy
 		
 		if power_loss > 0:
-			unit_drag_loss = int(power_loss / Globals.power_values[unit_drag_instance.unit_type])
+			unit_drag_loss = int(clamp(power_loss / Globals.power_values[unit_drag_instance.unit_type], 0, unit_drag_count))
 			unit_drag_count -= unit_drag_loss
 		
 		if power_loss_enemy > 0:
@@ -374,20 +374,21 @@ func initiate_combat(pos : Vector2) -> bool:
 			for index in range(unit_loss_enemy.size()):
 				var player_id : int = units.unit_instances[index].player
 				var loss_count : int = unit_loss_enemy[index]
+				var s : int = players[player_id].units.size()
 				
 				for player_index in range(players[player_id].units.size()):
-					if loss_count == 0:
+					if loss_count == 0 or players[player_id].units.size() == 0:
 						break
-					elif players[player_id].units[player_index].unit_type == unit_loss_type_enemy[index] and players[player_id].units[player_index].tile_pos == pos:
-						var unit_pop : Unit = players[player_id].units[player_index] 
-						players[player_id].units.remove(player_index)
-						unit_pop.queue_free()
+					elif players[player_id].units[s - player_index - 1].unit_type == unit_loss_type_enemy[index] and players[player_id].units[s - player_index - 1].tile_pos == pos:
+						var unit_pop : Unit = players[player_id].units[s - player_index - 1] 
+						players[player_id].units.remove(s - player_index - 1)
+						unit_pop.despawn()
 						
 						loss_count -= 1
 					
 				units.remove_unit_from_tile(units.unit_instances[index], unit_loss_enemy[index])
 		
-		if power_diff > 0:
+		if unit_drag_count > 0:
 			return true
 		else:
 			return false
@@ -441,18 +442,20 @@ func remove_units():
 	for index in range(players[player].units.size()):
 		if unit_drag_loss > 0:
 			if players[player].units[index].unit_type == unit_drag_instance.unit_type and players[player].units[index].movement == unit_drag_instance.movement and players[player].units[index].tile_pos == unit_drag_position:
-				#players[player].units[index].reposition(unit_drop_position)
+				players[player].units[index].reposition(unit_drop_position)
 				units_to_remove.append(index)
 				unit_drag_loss -= 1
 		else:
 			break
 	
+	yield(get_tree().create_timer(5.0), "timeout")
+	
 	for index in range(units_to_remove.size()):
 		var s : int = units_to_remove.size()
 		players[player].units.remove(units_to_remove[s - index - 1])
 		
+		player_unit[units_to_remove[s - index - 1]].despawn()
 		players[player].node.remove_child(player_unit[units_to_remove[s - index - 1]])
-		player_unit[units_to_remove[s - index - 1]].queue_free()
 
 func _on_CancelButton_pressed():
 	is_unit_dragging = false
