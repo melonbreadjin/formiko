@@ -193,15 +193,24 @@ func _on_AddHalfButton_pressed() -> void:
 func _on_AddAllButton_pressed() -> void:
 	$UnitSelection/Container/SelectorContainer/HScrollBar.value = $UnitSelection/Container/SelectorContainer/HScrollBar.max_value
 
-func _on_MoveButton_pressed():
+func _on_MoveButton_pressed() -> void:
 	reset_sidebar()
 	is_cancel_active = true
 	
 	Globals.emit_signal("move_camera_and_pointer", highlighted_tile)
 	Globals.emit_signal("move_unit", selected_unit, active_handler, $UnitSelection/Container/SelectorContainer/HScrollBar.value, highlighted_tile)
 
-func _on_CancelButton_pressed():
+func _on_CancelButton_pressed() -> void:
 	is_cancel_active = false
 
-func on_close_cancel_button():
+func on_close_cancel_button() -> void:
 	is_cancel_active = false
+
+func _on_WorkerScrollBar_value_changed(value : float) -> void:
+	$SpawnControl/UnitSelection/Container/WorkerContainer/TextureRect/UnitCount.text = "%d" % int(value)
+
+func _on_SoldierScrollBar_value_changed(value : float) -> void:
+	$SpawnControl/UnitSelection/Container/SoldierContainer/TextureRect/UnitCount.text = "%d" % int(value)
+
+func _on_QueenScrollBar_value_changed(value : float) -> void:
+	$SpawnControl/UnitSelection/Container/QueenContainer/TextureRect/UnitCount.text = "%d" % int(value)

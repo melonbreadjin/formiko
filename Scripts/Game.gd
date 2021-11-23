@@ -105,7 +105,7 @@ class Player:
 	}
 	
 	var resources : Dictionary = {
-		Globals.resource.FOOD : 0,
+		Globals.resource.FOOD : 10,
 		Globals.resource.HONEY : 0
 	}
 	
