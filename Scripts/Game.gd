@@ -100,6 +100,8 @@ class Player:
 	var colour : Color
 	var node : Node2D
 	
+	var queen_position : Vector2
+	
 	var units : Array = []
 	
 	var unit_count : Dictionary = {
@@ -130,6 +132,7 @@ func _ready() -> void:
 	
 	_sgn = Globals.connect("end_turn", self, "on_end_turn")
 	_sgn = Globals.connect("move_unit", self, "on_move_unit")
+	_sgn = Globals.connect("spawn_units", self, "on_spawn_units")
 	
 	randomize()
 	new_game()
@@ -198,24 +201,7 @@ func init_units() -> void:
 	for index in range(spawn_points.size()):
 		tilemap_territory.set_cellv(spawn_points[index], tileset_territory.find_tile_by_name("%d" % index))
 		
-		for entry in Globals.starting_units:
-			for _i in range(Globals.starting_units[entry]):
-				var instance = unit.instance()
-				
-				instance.player = index
-				instance.unit_type = Globals.starting_units.keys()[entry]
-				instance.tile_pos = spawn_points[index]
-				instance.name = Globals.UNIT_NAMES[instance.unit_type]
-				
-				instance.position = spawn_points[index] * Globals.BLOCK_SIZE + Vector2(Globals.BLOCK_SIZE / 2.0, Globals.BLOCK_SIZE / 2.0)
-				
-				instance.init_unit()
-				
-				unit_map.data[spawn_points[index].y][spawn_points[index].x].add_unit_to_tile(instance)
-				
-				players[index].unit_count[Globals.starting_units.keys()[entry]] += 1
-				players[index].node.add_child(instance)
-				players[index].units.append(instance)
+		spawn_units(index, Globals.starting_units, spawn_points[index])
 
 func init_spawn_points() -> PoolVector2Array:
 	var indeces : Array = []
@@ -415,6 +401,9 @@ func drop_unit(pos : Vector2, dist : int) -> void:
 		new_unit.movement = unit_drag_instance.movement - dist
 		new_unit.tile_pos = unit_drag_instance.tile_pos
 		
+		if unit_drag_instance.unit_type == Globals.unit_type.ANT_QUEEN:
+			players[active_player].queen_position = pos
+		
 		for unit_instance in unit_map.data[unit_drag_position.y][unit_drag_position.x].unit_instances:
 			if unit_instance == unit_drag_instance:
 				unit_map.data[unit_drag_position.y][unit_drag_position.x].remove_unit_from_tile(unit_drag_instance, unit_drag_count)
@@ -466,5 +455,34 @@ func remove_units():
 		player_unit[units_to_remove[s - index - 1]].despawn()
 		players[player].node.remove_child(player_unit[units_to_remove[s - index - 1]])
 
-func _on_CancelButton_pressed():
+func _on_CancelButton_pressed() -> void:
 	is_unit_dragging = false
+
+func on_spawn_units(player : int, spawns : Dictionary) -> void:
+	for entry in spawns:
+		var cost : Array = Globals.unit_cost[Globals.starting_units.keys()[entry]]
+		players[active_player].resources[cost[0]] -= cost[1] * spawns[entry]
+	
+	Globals.emit_signal("update_hud", players[active_player])
+	spawn_units(player, spawns, players[active_player].queen_position)
+
+func spawn_units(player : int, spawns : Dictionary, tile : Vector2 = Vector2(-1, -1)) -> void:
+	for entry in spawns:
+		for _i in range(spawns[entry]):
+			var instance = unit.instance()
+			
+			instance.player = player
+			instance.unit_type = Globals.starting_units.keys()[entry]
+			instance.tile_pos = tile
+			instance.name = Globals.UNIT_NAMES[instance.unit_type]
+			
+			instance.position = tile * Globals.BLOCK_SIZE + Vector2(Globals.BLOCK_SIZE / 2.0, Globals.BLOCK_SIZE / 2.0)
+			
+			instance.init_unit()
+			
+			unit_map.data[tile.y][tile.x].add_unit_to_tile(instance)
+			
+			players[player].queen_position = tile
+			players[player].unit_count[Globals.starting_units.keys()[entry]] += 1
+			players[player].node.add_child(instance)
+			players[player].units.append(instance)

@@ -25,6 +25,7 @@ func _ready() -> void:
 	_sgn = Globals.connect("toggle_sidebar", self, "on_toggle_sidebar")
 	_sgn = Globals.connect("select_unit", self, "on_select_unit")
 	_sgn = Globals.connect("update_turn", self, "on_update_turn")
+	_sgn = Globals.connect("update_hud", self, "update_hud")
 	_sgn = Globals.connect("reset_ui", self, "on_reset_ui")
 	_sgn = Globals.connect("close_cancel_button", self, "on_close_cancel_button")
 	
@@ -234,7 +235,7 @@ func _on_SoldierScrollBar_value_changed(value : float) -> void:
 	$SpawnControl/Container/SoldierContainer/TextureRect/UnitCount.text = "%d" % int(value)
 	$SpawnControl/Container/SoldierContainer/VBoxContainer/Cost.text = "%d" % (int(value) * Globals.unit_cost[Globals.unit_type.ANT_SOLDIER][1])
 
-func _on_SpawnButton_pressed():
+func _on_SpawnButton_pressed() -> void:
 	is_spawn_active = true
 	is_sidebar_active = false
 	is_unitselection_active = false
@@ -247,3 +248,10 @@ func _on_SpawnButton_pressed():
 	$SpawnControl/Container/SoldierContainer/TextureRect.self_modulate = Globals.COLOURS[active_player]
 	
 	reset_sidebar()
+
+func _on_Spawn_Buy_Button_pressed() -> void:
+	is_spawn_active = false
+	Globals.emit_signal("spawn_units", active_player, {
+		Globals.unit_type.ANT_WORKER : int($SpawnControl/Container/WorkerContainer/HScrollBar.value),
+		Globals.unit_type.ANT_SOLDIER : int($SpawnControl/Container/SoldierContainer/HScrollBar.value)
+	})

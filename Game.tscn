@@ -1044,7 +1044,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="SpawnButton" type="ToolButton" parent="CanvasLayer/SpawnControl/Container/SpawnPanel"]
+[node name="SpawnBuyButton" type="ToolButton" parent="CanvasLayer/SpawnControl/Container/SpawnPanel"]
 margin_right = 767.0
 margin_bottom = 89.0
 rect_scale = Vector2( 0.45, 0.45 )
@@ -1099,3 +1099,4 @@ script = ExtResource( 3 )
 [connection signal="pressed" from="CanvasLayer/SpawnPanel/SpawnButton" to="CanvasLayer" method="_on_SpawnButton_pressed"]
 [connection signal="value_changed" from="CanvasLayer/SpawnControl/Container/WorkerContainer/HScrollBar" to="CanvasLayer" method="_on_WorkerScrollBar_value_changed"]
 [connection signal="value_changed" from="CanvasLayer/SpawnControl/Container/SoldierContainer/HScrollBar" to="CanvasLayer" method="_on_SoldierScrollBar_value_changed"]
+[connection signal="pressed" from="CanvasLayer/SpawnControl/Container/SpawnPanel/SpawnBuyButton" to="CanvasLayer" method="_on_Spawn_Buy_Button_pressed"]

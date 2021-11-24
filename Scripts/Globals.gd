@@ -35,9 +35,12 @@ enum resource{
 signal highlight_tile(pos, off, zoom)
 signal update_seed(rnd_seed)
 
+signal spawn_units(player, spawns)
+
 signal select_unit(unit, unit_handler, unit_image, unit_count)
 signal move_unit(unit, unit_handler, unit_count, pos)
 signal update_turn(player, player_name, data)
+signal update_hud(data)
 signal end_turn()
 
 signal move_camera_and_pointer(pos)
@@ -71,8 +74,8 @@ var food_yields = {
 }
 
 var starting_units : Dictionary = {
-	unit_type.ANT_WORKER : 500,
-	unit_type.ANT_SOLDIER : 200,
+	unit_type.ANT_WORKER : 10,
+	unit_type.ANT_SOLDIER : 1,
 	unit_type.ANT_QUEEN : 1
 }
 
@@ -84,5 +87,5 @@ var power_values : Dictionary = {
 
 var unit_cost : Dictionary = {
 	unit_type.ANT_WORKER : [resource.FOOD, 10],
-	unit_type.ANT_SOLDIER : [resource.FOOD, 10]
+	unit_type.ANT_SOLDIER : [resource.FOOD, 50]
 }
