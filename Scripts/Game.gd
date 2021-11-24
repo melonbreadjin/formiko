@@ -64,19 +64,23 @@ class UnitMap:
 				unit_handler.append(handle)
 				unit_count.append(count)
 		
-		func remove_unit_from_tile(unit : Unit, count : int = 1) -> void:
+		func remove_unit_from_tile(unit : Unit, count : int = 1) -> bool:
 			var handle : Array = [unit.unit_type, unit.movement]
 			var index : int = unit_handler.find(handle)
 			
 			if index == -1:
-				return
+				return false
 			else:
 				if unit_count[index] <= count:
 					unit_instances.remove(index)
 					unit_handler.remove(index)
 					unit_count.remove(index)
+					
+					return true
 				else:
 					unit_count[index] -= count
+					
+					return false
 	
 	var data : Array
 	
@@ -371,8 +375,10 @@ func initiate_combat(pos : Vector2) -> bool:
 				unit_loss_enemy.append(int(player_power * power_share / Globals.power_values[units.unit_instances[index].unit_type]))
 				unit_loss_type_enemy.append(units.unit_instances[index].unit_type)
 			
+			var range_offset : int = 0
+			
 			for index in range(unit_loss_enemy.size()):
-				var player_id : int = units.unit_instances[index].player
+				var player_id : int = units.unit_instances[index - range_offset].player
 				var loss_count : int = unit_loss_enemy[index]
 				var s : int = players[player_id].units.size()
 				
@@ -386,7 +392,8 @@ func initiate_combat(pos : Vector2) -> bool:
 						
 						loss_count -= 1
 					
-				units.remove_unit_from_tile(units.unit_instances[index], unit_loss_enemy[index])
+				var is_all_removed : bool = units.remove_unit_from_tile(units.unit_instances[index - range_offset], unit_loss_enemy[index])
+				range_offset += 1 if is_all_removed else 0
 		
 		if unit_drag_count > 0:
 			return true

@@ -71,8 +71,8 @@ var food_yields = {
 }
 
 var starting_units : Dictionary = {
-	unit_type.ANT_WORKER : 10,
-	unit_type.ANT_SOLDIER : 1,
+	unit_type.ANT_WORKER : 500,
+	unit_type.ANT_SOLDIER : 200,
 	unit_type.ANT_QUEEN : 1
 }
 

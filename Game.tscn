@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=26 format=2]
 
 [ext_resource path="res://Scripts/Game.gd" type="Script" id=1]
 [ext_resource path="res://Assets/tilemap.png" type="Texture" id=2]
@@ -39,15 +39,30 @@ resource_local_to_scene = true
 atlas = ExtResource( 11 )
 region = Rect2( 0, 0, 16, 16 )
 
+[sub_resource type="AtlasTexture" id=14]
+resource_local_to_scene = true
+atlas = ExtResource( 7 )
+region = Rect2( 0, 32, 32, 32 )
+
 [sub_resource type="AtlasTexture" id=12]
 resource_local_to_scene = true
 atlas = ExtResource( 11 )
 region = Rect2( 0, 16, 16, 16 )
 
+[sub_resource type="AtlasTexture" id=15]
+resource_local_to_scene = true
+atlas = ExtResource( 7 )
+region = Rect2( 0, 32, 32, 32 )
+
 [sub_resource type="AtlasTexture" id=13]
 resource_local_to_scene = true
 atlas = ExtResource( 11 )
 region = Rect2( 0, 32, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=16]
+resource_local_to_scene = true
+atlas = ExtResource( 7 )
+region = Rect2( 0, 32, 32, 32 )
 
 [sub_resource type="TileSet" id=9]
 0/name = "grass_1"
@@ -884,13 +899,41 @@ __meta__ = {
 [node name="HScrollBar" type="HScrollBar" parent="CanvasLayer/SpawnControl/UnitSelection/Container/WorkerContainer"]
 margin_left = 68.0
 margin_top = 26.0
-margin_right = 345.0
+margin_right = 309.0
 margin_bottom = 38.0
 rect_min_size = Vector2( 64, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 4
 value = 1.0
 custom_step = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SpawnControl/UnitSelection/Container/WorkerContainer"]
+margin_left = 313.0
+margin_right = 345.0
+margin_bottom = 64.0
+alignment = 1
+
+[node name="Cost" type="Label" parent="CanvasLayer/SpawnControl/UnitSelection/Container/WorkerContainer/VBoxContainer"]
+margin_top = 4.0
+margin_right = 32.0
+margin_bottom = 24.0
+grow_horizontal = 0
+rect_min_size = Vector2( 30, 0 )
+custom_fonts/font = ExtResource( 8 )
+text = "0"
+align = 1
+valign = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ResourceTextureRect" type="TextureRect" parent="CanvasLayer/SpawnControl/UnitSelection/Container/WorkerContainer/VBoxContainer"]
+margin_top = 28.0
+margin_right = 32.0
+margin_bottom = 60.0
+rect_min_size = Vector2( 32, 32 )
+texture = SubResource( 14 )
+expand = true
 
 [node name="SoldierContainer" type="HBoxContainer" parent="CanvasLayer/SpawnControl/UnitSelection/Container"]
 margin_top = 116.0
@@ -926,13 +969,41 @@ __meta__ = {
 [node name="HScrollBar" type="HScrollBar" parent="CanvasLayer/SpawnControl/UnitSelection/Container/SoldierContainer"]
 margin_left = 68.0
 margin_top = 26.0
-margin_right = 345.0
+margin_right = 309.0
 margin_bottom = 38.0
 rect_min_size = Vector2( 64, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 4
 value = 1.0
 custom_step = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SpawnControl/UnitSelection/Container/SoldierContainer"]
+margin_left = 313.0
+margin_right = 345.0
+margin_bottom = 64.0
+alignment = 1
+
+[node name="Cost" type="Label" parent="CanvasLayer/SpawnControl/UnitSelection/Container/SoldierContainer/VBoxContainer"]
+margin_top = 4.0
+margin_right = 32.0
+margin_bottom = 24.0
+grow_horizontal = 0
+rect_min_size = Vector2( 30, 0 )
+custom_fonts/font = ExtResource( 8 )
+text = "0"
+align = 1
+valign = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ResourceTextureRect" type="TextureRect" parent="CanvasLayer/SpawnControl/UnitSelection/Container/SoldierContainer/VBoxContainer"]
+margin_top = 28.0
+margin_right = 32.0
+margin_bottom = 60.0
+rect_min_size = Vector2( 32, 32 )
+texture = SubResource( 15 )
+expand = true
 
 [node name="QueenContainer" type="HBoxContainer" parent="CanvasLayer/SpawnControl/UnitSelection/Container"]
 margin_top = 196.0
@@ -968,13 +1039,41 @@ __meta__ = {
 [node name="HScrollBar" type="HScrollBar" parent="CanvasLayer/SpawnControl/UnitSelection/Container/QueenContainer"]
 margin_left = 68.0
 margin_top = 26.0
-margin_right = 345.0
+margin_right = 309.0
 margin_bottom = 38.0
 rect_min_size = Vector2( 64, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 4
 value = 1.0
 custom_step = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SpawnControl/UnitSelection/Container/QueenContainer"]
+margin_left = 313.0
+margin_right = 345.0
+margin_bottom = 64.0
+alignment = 1
+
+[node name="Cost" type="Label" parent="CanvasLayer/SpawnControl/UnitSelection/Container/QueenContainer/VBoxContainer"]
+margin_top = 4.0
+margin_right = 32.0
+margin_bottom = 24.0
+grow_horizontal = 0
+rect_min_size = Vector2( 30, 0 )
+custom_fonts/font = ExtResource( 8 )
+text = "0"
+align = 1
+valign = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ResourceTextureRect" type="TextureRect" parent="CanvasLayer/SpawnControl/UnitSelection/Container/QueenContainer/VBoxContainer"]
+margin_top = 28.0
+margin_right = 32.0
+margin_bottom = 60.0
+rect_min_size = Vector2( 32, 32 )
+texture = SubResource( 16 )
+expand = true
 
 [node name="BuyPanel" type="NinePatchRect" parent="CanvasLayer/SpawnControl/UnitSelection/Container"]
 margin_top = 276.0
