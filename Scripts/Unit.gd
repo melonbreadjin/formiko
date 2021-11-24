@@ -31,6 +31,7 @@ func init_unit() -> void:
 			$Sprite.speed_scale = rng.randf_range(3, 3.5)
 			roam_speed = 12.0
 		Globals.unit_type.ANT_QUEEN:
+			$Sprite.animation = "walk_queen"
 			$Sprite.speed_scale = rng.randf_range(2, 2.5)
 			roam_speed = 4.0
 	
