@@ -28,6 +28,10 @@ var unit_drag_loss : int
 
 var _sgn
 
+class Yield:
+	var type : int
+	var yields : Array = []
+
 class UnitMap:
 	class Tile:
 		var unit_instances : Array = []
@@ -282,35 +286,39 @@ func create_world(rnd_seed : int) -> void:
 		yield_map.append([])
 		
 		for x in Globals.world_size.x:
-			var i = randf()
+			var i : float = randf()
+			var yield_inst : Yield = Yield.new()
 			
 			tilemap_territory.set_cell(x, y, -1)
 			
 			if i < Globals.worldgen_parameters["CHANCE_GRASS"]:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("grass_%d" % (randi() % 3 + 1)))
-				yield_map[y].append(Globals.food_yields["grass"])
+				yield_inst.type = Globals.tile.GRASS
 			elif i < Globals.worldgen_parameters["CHANCE_FLOWER"]:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("flower_%d" % (randi() % 3 + 1)))
-				yield_map[y].append(Globals.food_yields["flower"])
+				yield_inst.type = Globals.tile.FLOWER
 			elif i < Globals.worldgen_parameters["CHANCE_TREE"]:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("tree"))
-				yield_map[y].append(Globals.food_yields["tree"])
+				yield_inst.type = Globals.tile.TREE
 			elif i < Globals.worldgen_parameters["CHANCE_TREE_BEE"]:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("tree_bee"))
-				yield_map[y].append(Globals.food_yields["tree_bee"])
+				yield_inst.type = Globals.tile.TREE_BEE
 			elif i < Globals.worldgen_parameters["CHANCE_SAND"]:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("sand"))
-				yield_map[y].append(Globals.food_yields["sand"])
+				yield_inst.type = Globals.tile.SAND
 			elif i < Globals.worldgen_parameters["CHANCE_PUDDLE"]:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("puddle"))
-				yield_map[y].append(Globals.food_yields["puddle"])
+				yield_inst.type = Globals.tile.PUDDLE
+			
+			yield_inst.yields = Globals.food_yields[yield_inst.type]
+			yield_map[y].append(yield_inst)
 
 func on_end_turn() -> void:
 	var total : float = 0.0
 	
 	for worker in players[active_player].node.get_children():
 		if worker.unit_type == Globals.unit_type.ANT_WORKER:
-			total += yield_map[worker.tile_pos.y][worker.tile_pos.x]
+			total += yield_map[worker.tile_pos.y][worker.tile_pos.x].yields[Globals.resource.FOOD]
 	
 	players[active_player].resources[Globals.resource.FOOD] += total
 	players[active_player].added_resources[Globals.resource.FOOD] = total

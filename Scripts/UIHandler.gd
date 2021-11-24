@@ -74,7 +74,7 @@ func on_toggle_sidebar(info : Dictionary) -> void:
 		
 		$Sidebar/Container/TileInfo/TileNameLabel.text = info.tile_name
 		$Sidebar/Container/TileInfo/TileImage.texture.region.position = info.tile_region.position
-		$Sidebar/Container/YieldInfo/YieldData/YieldCountLabel.text = "%.2f" % info.tile_yield
+		$Sidebar/Container/YieldInfo/YieldData/YieldCountLabel.text = "%.2f" % info.tile_yield.yields[Globals.resource.FOOD]
 		
 		for index in range(info.units.unit_handler.size()):
 			var instance = unit_detail.instance()

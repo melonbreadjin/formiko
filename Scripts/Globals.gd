@@ -32,6 +32,15 @@ enum resource{
 	HONEY
 }
 
+enum tile{
+	GRASS,
+	FLOWER,
+	TREE,
+	TREE_BEE,
+	SAND,
+	PUDDLE
+}
+
 signal highlight_tile(pos, off, zoom)
 signal update_seed(rnd_seed)
 
@@ -65,12 +74,12 @@ var worldgen_parameters = {
 }
 
 var food_yields = {
-	"grass" : 0.25,
-	"flower" : 1.0,
-	"tree" : 0.75,
-	"tree_bee" : 0.75,
-	"sand" : 0,
-	"puddle" : 0.5
+	tile.GRASS : [0.25, 0.0],
+	tile.FLOWER : [1.0, 0.0],
+	tile.TREE : [0.75, 0.0],
+	tile.TREE_BEE : [0.50, 0.75],
+	tile.SAND : [0.0, 0.0],
+	tile.PUDDLE : [0.5, 0.0]
 }
 
 var starting_units : Dictionary = {
