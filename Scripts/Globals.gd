@@ -81,3 +81,8 @@ var power_values : Dictionary = {
 	unit_type.ANT_SOLDIER : 10,
 	unit_type.ANT_QUEEN : 65
 }
+
+var unit_cost : Dictionary = {
+	unit_type.ANT_WORKER : [resource.FOOD, 10],
+	unit_type.ANT_SOLDIER : [resource.FOOD, 10]
+}

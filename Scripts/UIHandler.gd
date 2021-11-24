@@ -6,8 +6,10 @@ var _sgn
 var is_sidebar_active = false
 var is_unitselection_active = false
 var is_cancel_active = false
+var is_spawn_active = false
 
 var active_player : int
+var active_resources : Dictionary
 
 var active_handler : Array
 var selected_unit : Unit
@@ -95,12 +97,17 @@ func on_toggle_sidebar(info : Dictionary) -> void:
 			$Sidebar/Container/UnitInfo.visible = true
 		
 		is_sidebar_active = true
+		is_spawn_active = false
 
 func _process(_delta : float) -> void:
 	var sidebar_target : float
 	var unitsel_target : float
 	var cancel_target : float
 	var end_target : float
+	var spawn_target : float
+	
+	if is_sidebar_active:
+		is_spawn_active = false
 	
 	if is_sidebar_active and not is_unitselection_active:
 		sidebar_target = get_viewport().size.y - $Sidebar/Container/PositionControl.rect_position.y - $Sidebar/Container/PositionControl.rect_size.y
@@ -119,6 +126,11 @@ func _process(_delta : float) -> void:
 		cancel_target = get_viewport().size.y
 		end_target = $Panel/PositionControl.rect_position.y + $Panel/PositionControl.rect_size.y
 	
+	if is_spawn_active:
+		spawn_target = get_viewport().size.y - $SpawnControl/Container/PositionControl.rect_position.y - $UnitSelection/Container/PositionControl.rect_size.y
+	else:
+		spawn_target = get_viewport().size.y
+	
 	if $Sidebar.rect_position.y != sidebar_target:
 		$Sidebar.rect_position.y = lerp($Sidebar.rect_position.y, sidebar_target, 0.25)
 	
@@ -130,13 +142,21 @@ func _process(_delta : float) -> void:
 	
 	if $Panel.rect_position.y != end_target:
 		$Panel.rect_position.y = lerp($Panel.rect_position.y, end_target, 0.25)
+	
+	if $SpawnControl.rect_position.y != spawn_target:
+		$SpawnControl.rect_position.y = lerp($SpawnControl.rect_position.y, spawn_target, 0.25)
 
 func on_update_turn(player : int, player_name : String, data : Game.Player) -> void:
 	if player == 0:
 		update_hud(data)
 	
 	active_player = player
+	active_resources = data.resources
 	$Debug/TurnLabel.text = "Turn : %s" % player_name
+	
+	is_sidebar_active = false
+	is_unitselection_active = false
+	is_spawn_active = false
 
 func update_hud(data : Game.Player):
 	$Data/FoodData/VBoxContainer/FoodLabel.bbcode_text = "%0.*f [color=%s](%c%0.*f)[/color]" % [
@@ -207,10 +227,23 @@ func on_close_cancel_button() -> void:
 	is_cancel_active = false
 
 func _on_WorkerScrollBar_value_changed(value : float) -> void:
-	$SpawnControl/UnitSelection/Container/WorkerContainer/TextureRect/UnitCount.text = "%d" % int(value)
+	$SpawnControl/Container/WorkerContainer/TextureRect/UnitCount.text = "%d" % int(value)
+	$SpawnControl/Container/WorkerContainer/VBoxContainer/Cost.text = "%d" % (int(value) * Globals.unit_cost[Globals.unit_type.ANT_WORKER][1])
 
 func _on_SoldierScrollBar_value_changed(value : float) -> void:
-	$SpawnControl/UnitSelection/Container/SoldierContainer/TextureRect/UnitCount.text = "%d" % int(value)
+	$SpawnControl/Container/SoldierContainer/TextureRect/UnitCount.text = "%d" % int(value)
+	$SpawnControl/Container/SoldierContainer/VBoxContainer/Cost.text = "%d" % (int(value) * Globals.unit_cost[Globals.unit_type.ANT_SOLDIER][1])
 
-func _on_QueenScrollBar_value_changed(value : float) -> void:
-	$SpawnControl/UnitSelection/Container/QueenContainer/TextureRect/UnitCount.text = "%d" % int(value)
+func _on_SpawnButton_pressed():
+	is_spawn_active = true
+	is_sidebar_active = false
+	is_unitselection_active = false
+	is_cancel_active = false
+	
+	$SpawnControl/Container/WorkerContainer/HScrollBar.max_value = int(active_resources[Globals.resource.FOOD] / Globals.unit_cost[Globals.unit_type.ANT_WORKER][1])
+	$SpawnControl/Container/SoldierContainer/HScrollBar.max_value = int(active_resources[Globals.resource.FOOD] / Globals.unit_cost[Globals.unit_type.ANT_SOLDIER][1])
+	
+	$SpawnControl/Container/WorkerContainer/TextureRect.self_modulate = Globals.COLOURS[active_player]
+	$SpawnControl/Container/SoldierContainer/TextureRect.self_modulate = Globals.COLOURS[active_player]
+	
+	reset_sidebar()

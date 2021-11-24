@@ -278,8 +278,10 @@ func get_units_in_tile(pos : Vector2) -> UnitMap.Tile:
 	return unit_map.data[pos.y][pos.x]
 
 func _unhandled_key_input(event : InputEventKey) -> void:
-	if "dev" in Globals.BUILD and event.scancode == KEY_F1 and event.pressed:
-		new_game()
+	if "dev" in Globals.BUILD and event.pressed:
+		match event.scancode:
+			KEY_F1:
+				new_game()
 
 func create_world(rnd_seed : int) -> void:
 	game_seed = rnd_seed
