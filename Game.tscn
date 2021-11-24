@@ -849,9 +849,11 @@ text = "0 (+0)"
 scroll_active = false
 
 [node name="SpawnControl" type="Control" parent="CanvasLayer"]
-margin_top = 1080.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = 360.0
 margin_right = 409.6
-margin_bottom = 1680.0
+margin_bottom = 960.0
 grow_horizontal = 0
 grow_vertical = 0
 __meta__ = {
