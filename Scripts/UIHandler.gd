@@ -147,7 +147,7 @@ func _process(_delta : float) -> void:
 	if $SpawnControl.rect_position.y != spawn_target:
 		$SpawnControl.rect_position.y = lerp($SpawnControl.rect_position.y, spawn_target, 0.25)
 
-func on_update_turn(player : int, player_name : String, data : Game.Player) -> void:
+func on_update_turn(player : int, player_name : String, data : Player) -> void:
 	if player == 0:
 		update_hud(data)
 	
@@ -159,7 +159,7 @@ func on_update_turn(player : int, player_name : String, data : Game.Player) -> v
 	is_unitselection_active = false
 	is_spawn_active = false
 
-func update_hud(data : Game.Player):
+func update_hud(data : Player) -> void:
 	$Data/FoodData/VBoxContainer/FoodLabel.bbcode_text = "%0.*f [color=%s](%c%0.*f)[/color]" % [
 		2 if fmod(data.resources[Globals.resource.FOOD], 1) else 0,
 		data.resources[Globals.resource.FOOD],

@@ -1,6 +1,18 @@
 extends Node2D
 class_name Unit
 
+const base_movement : Dictionary = {
+	Globals.unit_type.ANT_WORKER : 3.0,
+	Globals.unit_type.ANT_SOLDIER : 2.0,
+	Globals.unit_type.ANT_QUEEN : 1.0
+}
+
+const base_vision : Dictionary = {
+	Globals.unit_type.ANT_WORKER : 1.0,
+	Globals.unit_type.ANT_SOLDIER : 2.0,
+	Globals.unit_type.ANT_QUEEN : 1.0
+}
+
 var rng : RandomNumberGenerator
 
 var player : int
@@ -47,13 +59,7 @@ func init_unit() -> void:
 	reset_movement()
 
 func reset_movement() -> void:
-	match unit_type:
-		Globals.unit_type.ANT_WORKER:
-			movement = 3.0
-		Globals.unit_type.ANT_SOLDIER:
-			movement = 2.0
-		Globals.unit_type.ANT_QUEEN:
-			movement = 1.0
+	movement = base_movement[unit_type]
 
 func reposition(pos : Vector2) -> void:
 	tile_pos = pos

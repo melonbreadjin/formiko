@@ -9,10 +9,20 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Player",
+"class": "Bot",
+"language": "GDScript",
+"path": "res://Scripts/Bot.gd"
+}, {
 "base": "Node",
 "class": "Game",
 "language": "GDScript",
 "path": "res://Scripts/Game.gd"
+}, {
+"base": "Node",
+"class": "Player",
+"language": "GDScript",
+"path": "res://Scripts/Player.gd"
 }, {
 "base": "Node2D",
 "class": "Unit",
@@ -20,7 +30,9 @@ _global_script_classes=[ {
 "path": "res://Scripts/Unit.gd"
 } ]
 _global_script_class_icons={
+"Bot": "",
 "Game": "",
+"Player": "",
 "Unit": ""
 }
 

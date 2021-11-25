@@ -4,13 +4,16 @@ class_name Game
 onready var unit = preload("res://Scenes/Unit.tscn")
 
 var tilemap : TileMap
-var tileset : TileSet
-
 var tilemap_territory : TileMap
+var tilemap_fog : TileMap
+
+var tileset : TileSet
 var tileset_territory : TileSet
+var tileset_fog : TileSet
 
 var unit_map : UnitMap
 var yield_map : Array
+var fog_map : Array
 
 var players : Array
 
@@ -127,41 +130,17 @@ class UnitMap:
 				var tile = Tile.new()
 				data[y].append(tile)
 
-class Player:
-	var name : String
-	var is_bot : bool
-	var colour : Color
-	var node : Node2D
-	
-	var queen_position : Vector2
-	
-	var units : Array = []
-	
-	var unit_count : Dictionary = {
-		Globals.unit_type.ANT_WORKER : 0,
-		Globals.unit_type.ANT_SOLDIER : 0,
-		Globals.unit_type.ANT_QUEEN : 0
-	}
-	
-	var resources : Dictionary = {
-		Globals.resource.FOOD : 10,
-		Globals.resource.HONEY : 0
-	}
-	
-	var added_resources : Dictionary = {
-		Globals.resource.FOOD : 0,
-		Globals.resource.HONEY : 0
-	}
-	
-	func _to_string():
-		return "[name : %s, is_bot : %s, colour : %s, units : %s]" % [name, is_bot, colour, unit_count]
-
 func _ready() -> void:
 	tilemap = $World/TileMap
 	tileset = tilemap.tile_set
 	
 	tilemap_territory = $World/TerritoryMap
 	tileset_territory = tilemap_territory.tile_set
+	
+	tilemap_fog = $World/FogMap
+	tileset_fog = tilemap_fog.tile_set
+	
+	tilemap_fog.z_index = VisualServer.CANVAS_ITEM_Z_MAX
 	
 	_sgn = Globals.connect("end_turn", self, "on_end_turn")
 	_sgn = Globals.connect("move_unit", self, "on_move_unit")
@@ -186,6 +165,7 @@ func reset() -> void:
 		$World/Entities.remove_child(player_node)
 		player_node.queue_free()
 	
+	fog_map.clear()
 	yield_map.clear()
 	players.clear()
 
@@ -197,10 +177,10 @@ func new_game() -> void:
 		var player : Player = Player.new()
 		
 		if i < Globals.player_count:
-			player.name = "Player %d" % (i + 1)
+			player.player_name = "Player %d" % (i + 1)
 			player.is_bot = false
 		else:
-			player.name = "Player %d (Bot)" % (i + 1)
+			player.player_name = "Player %d (Bot)" % (i + 1)
 			player.is_bot = true
 		
 		player.colour = Globals.COLOURS[i]
@@ -209,7 +189,7 @@ func new_game() -> void:
 	player_count = players.size()
 	active_player = 0
 	
-	Globals.emit_signal("update_turn", active_player, players[active_player].name, players[active_player])
+	Globals.emit_signal("update_turn", active_player, players[active_player].player_name, players[active_player])
 	
 	init_players()
 
@@ -217,7 +197,7 @@ func init_players() -> void:
 	for player in players:
 		var node : Node2D = Node2D.new()
 		
-		node.name = player.name
+		node.name = player.player_name
 		
 		players[players.find(player)].node = node
 		$World/Entities.add_child(node)
@@ -275,7 +255,9 @@ func _unhandled_input(event : InputEvent) -> void:
 			
 			var distance : int = get_tile_distance(pos, unit_drag_position)
 			
-			if is_unit_dragging:
+			if tilemap_fog.get_cell(int(pos.x), int(pos.y)) == tileset_fog.find_tile_by_name("fog"):
+				Globals.emit_signal("toggle_sidebar", {})
+			elif is_unit_dragging:
 				if unit_drag_instance.movement < distance or distance == 0:
 					print("too far ", unit_drag_instance.movement)
 				else:
@@ -296,6 +278,62 @@ func get_tile_distance(a : Vector2, b : Vector2) -> int:
 func get_units_in_tile(pos : Vector2) -> UnitMap.Tile:
 	return unit_map.data[pos.y][pos.x]
 
+func is_out_of_bounds(x : int, y : int) -> bool:
+	return true if x < 0 or y < 0 or x >= Globals.world_size.x or y >= Globals.world_size.y else false 
+
+func get_tiles_in_area(x : int, y : int, radius : int, is_add : bool) -> Array:
+	var tiles : Array = []
+	
+	if is_out_of_bounds(x, y):
+		return tiles
+	
+	if is_add:
+		fog_map[y][x] += 1
+	else:
+		fog_map[y][x] -= 1
+	
+	if radius == 0:
+		tiles.append(Vector2(x, y))
+	else:
+		tiles.append(Vector2(x, y))
+		
+		tiles.append_array(get_tiles_in_area(x - 1, y, radius - 1, is_add))
+		tiles.append_array(get_tiles_in_area(x + 1, y, radius - 1, is_add))
+		tiles.append_array(get_tiles_in_area(x, y - 1, radius - 1, is_add))
+		tiles.append_array(get_tiles_in_area(x, y + 1, radius - 1, is_add))
+	
+	return tiles
+
+func clear_fog(x : int, y : int, radius : int, is_init : bool) -> void:
+	if is_out_of_bounds(x, y):
+		return
+	
+	if radius == -1:
+		return
+	elif radius == 0:
+		tilemap_fog.set_cell(x, y, -1)
+	else:
+		tilemap_fog.set_cell(x, y, -1)
+		
+		if tileset.tile_get_name(tilemap.get_cell(x, y)).begins_with("tree"):
+			radius = 1 if is_init else 0
+		
+		clear_fog(x - 1, y, radius - 1, false)
+		clear_fog(x + 1, y, radius - 1, false)
+		clear_fog(x, y - 1, radius - 1, false)
+		clear_fog(x, y + 1, radius - 1, false)
+
+func create_fog(x : int, y : int, a : int, b : int, radius : int) -> void:
+	var tiles_to : Array = get_tiles_in_area(a, b, radius, true)
+	
+	if x != -1:
+		var tiles_from : Array = get_tiles_in_area(x, y, radius, false)
+	
+		for tile in tiles_from:
+			if not tile in tiles_to:
+				if fog_map[tile.y][tile.x] == 0:
+					tilemap_fog.set_cellv(tile, tileset_fog.find_tile_by_name("fog"))
+
 func _unhandled_key_input(event : InputEventKey) -> void:
 	if "dev" in Globals.BUILD and event.pressed:
 		match event.scancode:
@@ -311,14 +349,20 @@ func create_world(rnd_seed : int) -> void:
 	unit_map = UnitMap.new()
 	unit_map.init()
 	
+	for y in Globals.world_size.y + 4:
+		for x in Globals.world_size.x + 4:
+			tilemap_fog.set_cell(x - 2, y - 2, tileset_fog.find_tile_by_name("fog"))
+	
 	for y in Globals.world_size.y:
 		yield_map.append([])
+		fog_map.append([])
 		
 		for x in Globals.world_size.x:
 			var i : float = randf()
 			var yield_inst : Yield = Yield.new()
 			
 			tilemap_territory.set_cell(x, y, -1)
+			fog_map[y].append(0)
 			
 			if i < Globals.worldgen_parameters["CHANCE_GRASS"]:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("grass_%d" % (randi() % 3 + 1)))
@@ -383,7 +427,7 @@ func on_end_turn() -> void:
 		player_unit.reset_movement()
 	
 	active_player = (active_player + 1) % player_count
-	Globals.emit_signal("update_turn", active_player, players[active_player].name, players[active_player])
+	Globals.emit_signal("update_turn", active_player, players[active_player].player_name, players[active_player])
 
 func on_move_unit(unit_instance : Unit, unit_handler : Array, unit_count : int, pos : Vector2) -> void:
 	if is_unit_dragging == false:
@@ -453,6 +497,8 @@ func drop_unit(pos : Vector2, dist : int) -> void:
 	
 	if initiate_combat(pos):
 		tilemap_territory.set_cellv(pos, tileset_territory.find_tile_by_name("%d" % active_player))
+		clear_fog(int(pos.x), int(pos.y), unit_drag_instance.base_vision[unit_drag_instance.unit_type], true)
+		create_fog(int(unit_drag_position.x), int(unit_drag_position.y), int(pos.x), int(pos.y), unit_drag_instance.base_vision[unit_drag_instance.unit_type])
 		
 		var new_unit : Unit = Unit.new()
 		
@@ -541,6 +587,10 @@ func spawn_units(player : int, spawns : Dictionary, tile : Vector2 = Vector2(-1,
 			instance.init_unit()
 			
 			unit_map.data[tile.y][tile.x].add_unit_to_tile(instance)
+			
+			if player == 0:
+				clear_fog(int(tile.x), int(tile.y), instance.base_vision[instance.unit_type], true)
+				create_fog(-1, -1, int(tile.x), int(tile.y), instance.base_vision[instance.unit_type])
 			
 			players[player].queen_position = tile
 			players[player].unit_count[Globals.starting_units.keys()[entry]] += 1
