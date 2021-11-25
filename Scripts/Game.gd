@@ -46,6 +46,15 @@ class UnitMap:
 			
 			return tile_power
 		
+		func get_unit_count(player) -> int:
+			var total_count : int = 0
+			
+			for index in range(unit_count.size()):
+				if unit_instances[index].player == player:
+					total_count += unit_count[index]
+			
+			return total_count
+		
 		func reset_movement() -> void:
 			for index in range(unit_instances.size()):
 				unit_instances[index].reset_movement()
@@ -310,7 +319,11 @@ func create_world(rnd_seed : int) -> void:
 				tilemap.set_cell(x, y, tileset.find_tile_by_name("puddle"))
 				yield_inst.type = Globals.tile.PUDDLE
 			
-			yield_inst.yields = Globals.food_yields[yield_inst.type]
+			yield_inst.yields = []
+			
+			for resource in range(Globals.resource.size()):
+				yield_inst.yields.append(Globals.food_yields[yield_inst.type][resource])
+			
 			yield_map[y].append(yield_inst)
 
 func on_end_turn() -> void:
@@ -325,7 +338,25 @@ func on_end_turn() -> void:
 	
 	for y in range(Globals.world_size.y):
 		for x in range(Globals.world_size.x):
-			get_units_in_tile(Vector2(x, y)).reset_movement()
+			var tile_data : UnitMap.Tile = get_units_in_tile(Vector2(x, y))
+			var total_units : int = tile_data.get_unit_count(active_player)
+			
+			tile_data.reset_movement()
+			
+			yield_map[y][x].yields[Globals.resource.FOOD] = clamp(
+				yield_map[y][x].yields[Globals.resource.FOOD] - \
+				pow(total_units, 1.6) * Globals.food_decay[yield_map[y][x].type][Globals.resource.FOOD],
+				0.0,
+				Globals.food_yields[yield_map[y][x].type][Globals.resource.FOOD]
+			)
+			
+			if (active_player + 1) % player_count == 0:
+				yield_map[y][x].yields[Globals.resource.FOOD] = clamp(
+					yield_map[y][x].yields[Globals.resource.FOOD] + \
+					Globals.food_growth[yield_map[y][x].type][Globals.resource.FOOD],
+					0.0,
+					Globals.food_yields[yield_map[y][x].type][Globals.resource.FOOD]
+				)
 	
 	for player_unit in players[active_player].units:
 		player_unit.reset_movement()

@@ -73,13 +73,31 @@ var worldgen_parameters = {
 	"CHANCE_PUDDLE" : 1.0
 }
 
-var food_yields = {
+var food_yields : Dictionary = {
 	tile.GRASS : [0.25, 0.0],
 	tile.FLOWER : [1.0, 0.0],
 	tile.TREE : [0.75, 0.0],
 	tile.TREE_BEE : [0.50, 0.75],
 	tile.SAND : [0.0, 0.0],
 	tile.PUDDLE : [0.5, 0.0]
+}
+
+var food_growth : Dictionary = {
+	tile.GRASS : [0.025, 0.0],
+	tile.FLOWER : [0.15, 0.0],
+	tile.TREE : [0.1, 0.0],
+	tile.TREE_BEE : [0.05, 0.1],
+	tile.SAND : [0.0, 0.0],
+	tile.PUDDLE : [0.05, 0.0]
+}
+
+var food_decay : Dictionary = {
+	tile.GRASS : [0.0001, 0.0],
+	tile.FLOWER : [0.002, 0.0],
+	tile.TREE : [0.0015, 0.0],
+	tile.TREE_BEE : [0.0005, 0.0015],
+	tile.SAND : [0.0, 0.0],
+	tile.PUDDLE : [0.0005, 0.0]
 }
 
 var starting_units : Dictionary = {
