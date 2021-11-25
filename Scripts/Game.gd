@@ -60,6 +60,26 @@ class UnitMap:
 				unit_instances[index].reset_movement()
 				unit_handler[index][1] = unit_instances[index].movement
 		
+		func stack_arrays() -> void:
+			var temp_handler : Array = []
+			var temp_indeces : Array = []
+			var move_indeces : Array = []
+			
+			for index in range(unit_instances.size()):
+				var i : int = temp_handler.find(unit_handler[index])
+				
+				if i != -1:
+					move_indeces.append(index)
+					unit_count[i] += unit_count[index]
+				else:
+					temp_handler.append(unit_handler[index])
+					temp_indeces.append(index)
+			
+			for index in move_indeces:
+				unit_instances.remove(index)
+				unit_handler.remove(index)
+				unit_count.remove(index)
+		
 		func add_unit_to_tile(unit : Unit, count : int = 1) -> void:
 			var handle : Array = [unit.unit_type, unit.movement]
 			var index : int = unit_handler.find(handle)
@@ -342,6 +362,7 @@ func on_end_turn() -> void:
 			var total_units : int = tile_data.get_unit_count(active_player)
 			
 			tile_data.reset_movement()
+			tile_data.stack_arrays()
 			
 			yield_map[y][x].yields[Globals.resource.FOOD] = clamp(
 				yield_map[y][x].yields[Globals.resource.FOOD] - \
