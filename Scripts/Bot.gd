@@ -83,11 +83,13 @@ func update_goal() -> void:
 	current_goal = action.END
 
 func update_desire_scout_count() -> void:
-	desire_scout_count = int(Globals.world_size.x * Globals.world_size.y / units[0].base_movement[Globals.unit_type.ANT_WORKER] / vision.size())
+	desire_scout_count = int(Globals.world_size.x * Globals.world_size.y / explored_tiles.size())
 	print("%s: set desire scout count to %d" % [player_name, desire_scout_count])
 
 func get_action() -> void:
 	current_action = action.START
+	
+	print(resources[Globals.resource.FOOD])
 	
 	if current_goal == goal.EXPLORE:
 		while current_action != action.END:
@@ -97,8 +99,7 @@ func get_action() -> void:
 				
 				update_vision()
 				
-				if scout_indeces.size() == 0:
-					update_desire_scout_count()
+				update_desire_scout_count()
 				
 				for index in range(units.size()):
 					if units[index].unit_type == Globals.unit_type.ANT_SOLDIER and not index in scout_indeces:
@@ -108,7 +109,7 @@ func get_action() -> void:
 				
 				current_action = action.SPAWN
 			elif current_action == action.SPAWN:
-				if desire_scout_count >= scout_indeces.size():
+				if desire_scout_count < scout_indeces.size():
 					current_action = action.MOVE
 					continue
 				
@@ -126,6 +127,8 @@ func get_action() -> void:
 					var scout_ring : Array
 					var scout_ring_size : int = 1
 					var scout_target : Vector2 = Vector2(-1, -1)
+					
+					vision.shuffle()
 					
 					while not explore_target_found:
 						scout_ring = get_ring(units[scout].tile_pos, scout_ring_size)

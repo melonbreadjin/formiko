@@ -612,7 +612,7 @@ func spawn_units(player : int, spawns : Dictionary, tile : Vector2 = Vector2(-1,
 			players[player].units.append(instance)
 
 func on_bot_spawn_unit(unit_type : int, unit_count : int) -> void:
-	spawn_units(active_player, {unit_type : unit_count}, players[active_player].queen_position)
+	on_spawn_units(active_player, {unit_type : unit_count})
 
 func on_bot_move_unit(unit_instance : Unit, unit_handler : Array, unit_count : int, from : Vector2, to : Vector2) -> void:
 	on_move_unit(unit_instance, unit_handler, unit_count, from)
