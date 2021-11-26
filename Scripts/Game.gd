@@ -502,7 +502,12 @@ func initiate_combat(pos : Vector2) -> bool:
 			return false
 
 func drop_unit(pos : Vector2, dist : int) -> void:
-	unit_drop_position = pos
+	if unit_drag_position.distance_to(unit_drop_position) > unit_drag_instance.movement:
+		var point : Vector2 = lerp(unit_drop_position, unit_drag_position, unit_drag_instance.movement / unit_drag_position.distance_to(unit_drop_position))
+		
+		unit_drop_position = Vector2(int(point.x), int(point.y))
+	else:
+		unit_drop_position = pos
 	
 	if initiate_combat(pos):
 		tilemap_territory.set_cellv(pos, tileset_territory.find_tile_by_name("%d" % active_player))

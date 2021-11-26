@@ -37,15 +37,17 @@ func add_to_vision(pos : Vector2, radius : int) -> void:
 	if radius == -1:
 		return
 	elif radius == 0:
-		if not pos in vision:
-			vision.append(pos)
-		if not pos in explored_tiles:
-			explored_tiles.append(pos)
+		if pos.x >= 0 and pos.x < Globals.world_size.x and pos.y >= 0 and pos.y < Globals.world_size.y:
+			if not pos in vision:
+				vision.append(pos)
+			if not pos in explored_tiles:
+				explored_tiles.append(pos)
 	else:
-		if not pos in vision:
-			vision.append(pos)
-		if not pos in explored_tiles:
-			explored_tiles.append(pos)
+		if pos.x >= 0 and pos.x < Globals.world_size.x and pos.y >= 0 and pos.y < Globals.world_size.y:
+			if not pos in vision:
+				vision.append(pos)
+			if not pos in explored_tiles:
+				explored_tiles.append(pos)
 		
 		add_to_vision(Vector2(pos.x - 1, pos.y), radius - 1)
 		add_to_vision(Vector2(pos.x + 1, pos.y), radius - 1)
@@ -145,12 +147,12 @@ func get_action() -> void:
 						
 						for tile in vision:
 							var dist : float = scout_target.distance_to(tile)
-							min_dist = min(dist, min_dist)
 							
-							if dist == min_dist:
+							if dist <= min_dist:
+								min_dist = dist
 								target_tile = tile
 						
-						Globals.emit_signal("bot_move_unit", units[scout], [units[scout].unit_type, units[scout].movement], 1, units[scout].tile_pos, scout_target)
+						Globals.emit_signal("bot_move_unit", units[scout], [units[scout].unit_type, units[scout].movement], 1, units[scout].tile_pos, target_tile)
 						print("%s: scout unit %d moving to: %s" % [player_name, scout, target_tile])
 					
 				current_action = action.END
@@ -159,8 +161,14 @@ func get_ring(pos : Vector2, size : int) -> Array:
 	var ring : Array = []
 	
 	for x in range(-size, size + 1):
-		if pos.x + x < Globals.world_size.x and pos.y + size - abs(x) < Globals.world_size.y:
-			ring.append(Vector2(pos.x + x, pos.y + size - abs(x)))
-			if size - abs(x) != 0 and pos.y - size - abs(x) >= 0:
-				ring.append(Vector2(pos.x + x, pos.y - size - abs(x)))
+		var nx = pos.x + x
+		var ny_1 = pos.y + size - abs(x)
+		var ny_2 = pos.y - size - abs(x)
+		
+		if nx >= 0 and nx < Globals.world_size.x:
+			if ny_1 >= 0 and ny_1 < Globals.world_size.y:
+				ring.append(Vector2(nx, ny_1))
+			if ny_1 != ny_2 and ny_2 >= 0 and ny_2 < Globals.world_size.y:
+				ring.append(Vector2(nx, ny_2))
+	
 	return ring
