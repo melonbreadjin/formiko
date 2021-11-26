@@ -14,6 +14,8 @@ var desire_scout_count : int = 0
 
 var if_player_detected : bool = false
 
+var _sgn
+
 enum action{
 	START,
 	SPAWN,
@@ -34,6 +36,10 @@ enum explore_target{
 	LATERAL_POSITIVE,
 	CENTRAL
 }
+
+func despawn_unit(index : int) -> void:
+	if index in scout_indeces:
+		scout_indeces.remove(scout_indeces.find(index))
 
 func add_to_vision(pos : Vector2, radius : int) -> void:
 	if radius == -1:
@@ -81,13 +87,11 @@ func update_goal() -> void:
 		
 		get_action()
 	
-	print("%s: ending turn" % player_name)
 	Globals.emit_signal("bot_end_turn")
 	current_goal = action.END
 
 func update_desire_scout_count() -> void:
 	desire_scout_count = int(Globals.world_size.x * Globals.world_size.y / explored_tiles.size())
-	print("%s: set desire scout count to %d" % [player_name, desire_scout_count])
 
 func get_action() -> void:
 	current_action = action.START
@@ -97,9 +101,6 @@ func get_action() -> void:
 	if current_goal == goal.EXPLORE:
 		while current_action != action.END:
 			if current_action == action.START:
-				print("%s: exploring..." % player_name)
-				print("%s: updating vision..." % player_name)
-				
 				update_vision()
 				
 				update_desire_scout_count()
@@ -107,8 +108,6 @@ func get_action() -> void:
 				for index in range(units.size()):
 					if units[index].unit_type == Globals.unit_type.ANT_SOLDIER and not index in scout_indeces:
 						scout_indeces.append(index)
-						
-						print("%s: added scout unit %d..." % [player_name, index])
 				
 				current_action = action.SPAWN
 			elif current_action == action.SPAWN:
@@ -134,6 +133,10 @@ func get_action() -> void:
 					vision.shuffle()
 					
 					while not explore_target_found:
+						if explored_tiles.size() >= Globals.world_size.x * Globals.world_size.y:
+							current_action = action.END
+							break
+						
 						scout_ring = get_ring(units[scout].tile_pos, scout_ring_size)
 						
 						for tile in scout_ring:
@@ -145,9 +148,6 @@ func get_action() -> void:
 						scout_ring_size += 1
 					
 					if scout_target != Vector2(-1, -1):
-						print("%s: scout unit %d target: %s at ring %d..." % [player_name, scout, scout_target, scout_ring_size - 1])
-						print("%s: current vision: %s" % [player_name, vision])
-						
 						var min_dist : float = Globals.world_size.x * Globals.world_size.y
 						var target_tile : Vector2 = Vector2(-1, -1)
 						
@@ -159,7 +159,6 @@ func get_action() -> void:
 								target_tile = tile
 						
 						Globals.emit_signal("bot_move_unit", units[scout], [units[scout].unit_type, units[scout].movement], 1, units[scout].tile_pos, target_tile)
-						print("%s: scout unit %d moving to: %s" % [player_name, scout, target_tile])
 					
 				current_action = action.END
 	elif current_goal == goal.EXPAND:

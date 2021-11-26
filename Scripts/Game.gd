@@ -491,6 +491,9 @@ func initiate_combat(pos : Vector2) -> bool:
 						players[player_id].units.remove(s - player_index - 1)
 						unit_pop.despawn()
 						
+						if players[player_id].is_bot:
+							players[player_id].despawn_unit(s - player_index - 1)
+						
 						loss_count -= 1
 					
 				var is_all_removed : bool = units.remove_unit_from_tile(units.unit_instances[index - range_offset], unit_loss_enemy[index])
@@ -511,8 +514,10 @@ func drop_unit(pos : Vector2, dist : int) -> void:
 	
 	if initiate_combat(pos):
 		tilemap_territory.set_cellv(pos, tileset_territory.find_tile_by_name("%d" % active_player))
-		clear_fog(int(pos.x), int(pos.y), unit_drag_instance.base_vision[unit_drag_instance.unit_type], true)
-		create_fog(int(unit_drag_position.x), int(unit_drag_position.y), int(pos.x), int(pos.y), unit_drag_instance.base_vision[unit_drag_instance.unit_type])
+		
+		if active_player == 0:
+			clear_fog(int(pos.x), int(pos.y), unit_drag_instance.base_vision[unit_drag_instance.unit_type], true)
+			create_fog(int(unit_drag_position.x), int(unit_drag_position.y), int(pos.x), int(pos.y), unit_drag_instance.base_vision[unit_drag_instance.unit_type])
 		
 		var new_unit : Unit = Unit.new()
 		
@@ -573,6 +578,10 @@ func remove_units():
 		players[player].units.remove(units_to_remove[s - index - 1])
 		
 		player_unit[units_to_remove[s - index - 1]].despawn()
+		
+		if players[player].is_bot:
+			players[player].despawn_unit(s - index - 1)
+			
 		players[player].node.remove_child(player_unit[units_to_remove[s - index - 1]])
 
 func _on_CancelButton_pressed() -> void:
