@@ -146,6 +146,10 @@ func _ready() -> void:
 	_sgn = Globals.connect("move_unit", self, "on_move_unit")
 	_sgn = Globals.connect("spawn_units", self, "on_spawn_units")
 	
+	_sgn = Globals.connect("bot_spawn_unit", self, "on_bot_spawn_unit")
+	_sgn = Globals.connect("bot_move_unit", self, "on_bot_move_unit")
+	_sgn = Globals.connect("bot_end_turn", self, "on_bot_end_turn")
+	
 	randomize()
 	new_game()
 
@@ -174,12 +178,14 @@ func new_game() -> void:
 	create_world(randi())
 	
 	for i in range(Globals.player_count + Globals.bot_count):
-		var player : Player = Player.new()
+		var player : Player
 		
 		if i < Globals.player_count:
+			player = Player.new()
 			player.player_name = "Player %d" % (i + 1)
 			player.is_bot = false
 		else:
+			player = Bot.new()
 			player.player_name = "Player %d (Bot)" % (i + 1)
 			player.is_bot = true
 		
@@ -428,6 +434,9 @@ func on_end_turn() -> void:
 	
 	active_player = (active_player + 1) % player_count
 	Globals.emit_signal("update_turn", active_player, players[active_player].player_name, players[active_player])
+	
+	if players[active_player].is_bot:
+		players[active_player].set_goal_queue()
 
 func on_move_unit(unit_instance : Unit, unit_handler : Array, unit_count : int, pos : Vector2) -> void:
 	if is_unit_dragging == false:
@@ -510,8 +519,8 @@ func drop_unit(pos : Vector2, dist : int) -> void:
 		if unit_drag_instance.unit_type == Globals.unit_type.ANT_QUEEN:
 			players[active_player].queen_position = pos
 		
-		for unit_instance in unit_map.data[unit_drag_position.y][unit_drag_position.x].unit_instances:
-			if unit_instance == unit_drag_instance:
+		for unit_handler in unit_map.data[unit_drag_position.y][unit_drag_position.x].unit_handler:
+			if unit_handler == unit_drag_handler:
 				unit_map.data[unit_drag_position.y][unit_drag_position.x].remove_unit_from_tile(unit_drag_instance, unit_drag_count)
 				unit_map.data[pos.y][pos.x].add_unit_to_tile(new_unit, unit_drag_count)
 				
@@ -596,3 +605,13 @@ func spawn_units(player : int, spawns : Dictionary, tile : Vector2 = Vector2(-1,
 			players[player].unit_count[Globals.starting_units.keys()[entry]] += 1
 			players[player].node.add_child(instance)
 			players[player].units.append(instance)
+
+func on_bot_spawn_unit(unit_type : int, unit_count : int) -> void:
+	spawn_units(active_player, {unit_type : unit_count}, players[active_player].queen_position)
+
+func on_bot_move_unit(unit_instance : Unit, unit_handler : Array, unit_count : int, from : Vector2, to : Vector2) -> void:
+	on_move_unit(unit_instance, unit_handler, unit_count, from)
+	drop_unit(to, int(from.distance_to(to)))
+
+func on_bot_end_turn() -> void:
+	on_end_turn()

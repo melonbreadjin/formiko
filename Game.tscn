@@ -13,15 +13,15 @@
 [ext_resource path="res://Assets/ants.png" type="Texture" id=11]
 [ext_resource path="res://Assets/territorymap.png" type="Texture" id=12]
 
-[sub_resource type="AtlasTexture" id=5]
+[sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 5 )
 region = Rect2( 0, 0, 32, 32 )
 
-[sub_resource type="AtlasTexture" id=6]
+[sub_resource type="AtlasTexture" id=2]
 atlas = ExtResource( 2 )
 region = Rect2( 0, 0, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=7]
+[sub_resource type="AtlasTexture" id=3]
 atlas = ExtResource( 7 )
 region = Rect2( 0, 32, 32, 32 )
 
@@ -30,31 +30,31 @@ resource_local_to_scene = true
 atlas = ExtResource( 11 )
 region = Rect2( 0, 0, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=8]
+[sub_resource type="AtlasTexture" id=5]
 atlas = ExtResource( 7 )
 region = Rect2( 0, 32, 32, 32 )
 
-[sub_resource type="AtlasTexture" id=11]
+[sub_resource type="AtlasTexture" id=6]
 resource_local_to_scene = true
 atlas = ExtResource( 11 )
 region = Rect2( 0, 0, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=14]
+[sub_resource type="AtlasTexture" id=7]
 resource_local_to_scene = true
 atlas = ExtResource( 7 )
 region = Rect2( 0, 32, 32, 32 )
 
-[sub_resource type="AtlasTexture" id=12]
+[sub_resource type="AtlasTexture" id=8]
 resource_local_to_scene = true
 atlas = ExtResource( 11 )
 region = Rect2( 0, 16, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=15]
+[sub_resource type="AtlasTexture" id=9]
 resource_local_to_scene = true
 atlas = ExtResource( 7 )
 region = Rect2( 0, 32, 32, 32 )
 
-[sub_resource type="TileSet" id=9]
+[sub_resource type="TileSet" id=10]
 0/name = "grass_1"
 0/texture = ExtResource( 2 )
 0/tex_offset = Vector2( 0, 0 )
@@ -196,7 +196,7 @@ region = Rect2( 0, 32, 32, 32 )
 9/shapes = [  ]
 9/z_index = 0
 
-[sub_resource type="TileSet" id=10]
+[sub_resource type="TileSet" id=11]
 0/name = "0"
 0/texture = ExtResource( 12 )
 0/tex_offset = Vector2( 0, 0 )
@@ -240,7 +240,7 @@ region = Rect2( 0, 32, 32, 32 )
 2/shapes = [  ]
 2/z_index = 0
 
-[sub_resource type="TileSet" id=16]
+[sub_resource type="TileSet" id=12]
 0/name = "fog"
 0/texture = ExtResource( 12 )
 0/tex_offset = Vector2( 0, 0 )
@@ -298,7 +298,7 @@ modulate = Color( 1, 1, 1, 0.886275 )
 margin_left = -40.0
 margin_bottom = 40.0
 mouse_filter = 2
-texture = SubResource( 5 )
+texture = SubResource( 1 )
 stretch_mode = 1
 __meta__ = {
 "_edit_use_anchors_": false
@@ -356,7 +356,7 @@ custom_constants/separation = 64
 margin_right = 64.0
 margin_bottom = 64.0
 rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 6 )
+texture = SubResource( 2 )
 stretch_mode = 1
 
 [node name="TileNameLabel" type="Label" parent="CanvasLayer/Sidebar/Container/TileInfo"]
@@ -402,7 +402,7 @@ margin_left = 14.0
 margin_right = 46.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 32, 32 )
-texture = SubResource( 7 )
+texture = SubResource( 3 )
 stretch_mode = 1
 __meta__ = {
 "_edit_use_anchors_": false
@@ -837,7 +837,7 @@ margin_right = 64.0
 margin_bottom = 64.0
 rect_min_size = Vector2( 64, 64 )
 mouse_filter = 2
-texture = SubResource( 8 )
+texture = SubResource( 5 )
 expand = true
 stretch_mode = 1
 
@@ -919,7 +919,7 @@ alignment = 1
 margin_right = 64.0
 margin_bottom = 64.0
 rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 11 )
+texture = SubResource( 6 )
 expand = true
 
 [node name="UnitCount" type="Label" parent="CanvasLayer/SpawnControl/Container/WorkerContainer/TextureRect"]
@@ -975,7 +975,7 @@ margin_top = 28.0
 margin_right = 32.0
 margin_bottom = 60.0
 rect_min_size = Vector2( 32, 32 )
-texture = SubResource( 14 )
+texture = SubResource( 7 )
 expand = true
 
 [node name="SoldierContainer" type="HBoxContainer" parent="CanvasLayer/SpawnControl/Container"]
@@ -988,7 +988,7 @@ alignment = 1
 margin_right = 64.0
 margin_bottom = 64.0
 rect_min_size = Vector2( 64, 64 )
-texture = SubResource( 12 )
+texture = SubResource( 8 )
 expand = true
 
 [node name="UnitCount" type="Label" parent="CanvasLayer/SpawnControl/Container/SoldierContainer/TextureRect"]
@@ -1044,7 +1044,7 @@ margin_top = 28.0
 margin_right = 32.0
 margin_bottom = 60.0
 rect_min_size = Vector2( 32, 32 )
-texture = SubResource( 15 )
+texture = SubResource( 9 )
 expand = true
 
 [node name="SpawnPanel" type="NinePatchRect" parent="CanvasLayer/SpawnControl/Container"]
@@ -1085,7 +1085,7 @@ __meta__ = {
 
 [node name="TileMap" type="TileMap" parent="World"]
 scale = Vector2( 8, 8 )
-tile_set = SubResource( 9 )
+tile_set = SubResource( 10 )
 cell_size = Vector2( 16, 16 )
 format = 1
 
@@ -1093,14 +1093,15 @@ format = 1
 self_modulate = Color( 1, 1, 1, 0.25098 )
 scale = Vector2( 8, 8 )
 z_index = 10
-tile_set = SubResource( 10 )
+tile_set = SubResource( 11 )
 cell_size = Vector2( 16, 16 )
 format = 1
 
 [node name="FogMap" type="TileMap" parent="World"]
+visible = false
 scale = Vector2( 8, 8 )
 z_as_relative = false
-tile_set = SubResource( 16 )
+tile_set = SubResource( 12 )
 cell_size = Vector2( 16, 16 )
 format = 1
 

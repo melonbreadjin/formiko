@@ -54,6 +54,10 @@ signal end_turn()
 
 signal move_camera_and_pointer(pos)
 
+signal bot_spawn_unit(unit_type, unit_count)
+signal bot_move_unit(unit, unit_handler, unit_count, from, to)
+signal bot_end_turn()
+
 signal reset_ui()
 signal close_cancel_button()
 signal toggle_sidebar(info)
