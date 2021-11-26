@@ -1,6 +1,8 @@
 extends Player
 class_name Bot
 
+var yield_map : Array
+
 var goal_queue : Array = []
 var current_goal : int
 var current_action : int
@@ -60,7 +62,8 @@ func update_vision() -> void:
 	for unit in units:
 		add_to_vision(unit.tile_pos, unit.base_vision[unit.unit_type])
 
-func set_goal_queue() -> void:
+func set_goal_queue(yields : Array) -> void:
+	yield_map = yields
 	goal_queue = [goal.EXPAND, goal.EXPLOIT]
 	
 	if if_player_detected:
@@ -159,6 +162,47 @@ func get_action() -> void:
 						print("%s: scout unit %d moving to: %s" % [player_name, scout, target_tile])
 					
 				current_action = action.END
+	elif current_goal == goal.EXPAND:
+		if current_action == action.START:
+			var areas : Array = []
+			var param : Array = []
+			
+			for unit in units:
+				if unit.unit_type == Globals.unit_type.ANT_WORKER:
+					var index : int = param.find([unit.tile_pos, unit.base_vision[unit.unit_type]])
+					var max_yield : float = yield_map[unit.tile_pos.y][unit.tile_pos.x].yields[Globals.resource.FOOD]
+					var target_tile : Vector2 = Vector2(-1, -1)
+					var area : Array
+					
+					if index == -1:
+						area = get_area(unit.tile_pos, unit.base_vision[unit.unit_type])
+						
+						param.append([unit.tile_pos, unit.base_vision[unit.unit_type]])
+						areas.append(area)
+					else:
+						area = areas[index]
+					
+					area.shuffle()
+					
+					for tile in area:
+						var tile_yield : float = yield_map[tile.y][tile.x].yields[Globals.resource.FOOD]
+						
+						if tile_yield > max_yield:
+							max_yield = tile_yield
+							target_tile = tile
+					
+					if target_tile != Vector2(-1, -1):
+						Globals.emit_signal("bot_move_unit", unit, [unit.unit_type, unit.movement], 1, unit.tile_pos, target_tile)
+			
+			current_action = action.END
+
+func get_area(pos : Vector2, size : int) -> Array:
+	var area : Array = []
+	
+	for i in range(size):
+		area.append_array(get_ring(pos, i + 1))
+	
+	return area
 
 func get_ring(pos : Vector2, size : int) -> Array:
 	var ring : Array = []

@@ -436,7 +436,7 @@ func on_end_turn() -> void:
 	Globals.emit_signal("update_turn", active_player, players[active_player].player_name, players[active_player])
 	
 	if players[active_player].is_bot:
-		players[active_player].set_goal_queue()
+		players[active_player].set_goal_queue(yield_map)
 
 func on_move_unit(unit_instance : Unit, unit_handler : Array, unit_count : int, pos : Vector2) -> void:
 	if is_unit_dragging == false:

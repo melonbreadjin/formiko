@@ -69,9 +69,6 @@ func reposition(pos : Vector2) -> void:
 	$Timer.start(0.1)
 
 func _physics_process(delta : float) -> void:
-	if not Globals.camera_rect.has_point(position):
-		return
-	
 	if position.distance_to(center_pos) > 48.0 and is_repositioning:
 		roam_speed = 64.0
 	else:
@@ -90,9 +87,6 @@ func _physics_process(delta : float) -> void:
 	position += Vector2(cos(rotation - PI / 4), sin(rotation - PI / 4)).normalized() * roam_speed * delta
 
 func _on_Timer_timeout() -> void:
-	if not Globals.camera_rect.has_point(position):
-		return
-	
 	if position.distance_to(center_pos) > 48.0:
 		target_rot = rng.randfn(position.direction_to(center_pos).angle())
 	else:
