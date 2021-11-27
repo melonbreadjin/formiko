@@ -506,7 +506,6 @@ func initiate_combat(pos : Vector2) -> bool:
 
 func drop_unit(pos : Vector2, dist : int) -> void:
 	if unit_drag_position.distance_to(pos) > unit_drag_instance.movement:
-		print(unit_drag_position, " ", pos, " ", unit_drag_instance.movement)
 		for _count in range(unit_drag_instance.movement - 1):
 			var dx : int = int(abs(pos.x - unit_drag_position.x))
 			var dy : int = int(abs(pos.y - unit_drag_position.y))
@@ -518,7 +517,6 @@ func drop_unit(pos : Vector2, dist : int) -> void:
 			else:
 				pos.y = pos.y + (1 if unit_drag_position.y < pos.y else -1)
 				dy -= 1
-		print(unit_drag_position)
 		
 	unit_drop_position = pos
 	

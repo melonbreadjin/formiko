@@ -38,8 +38,10 @@ enum explore_target{
 }
 
 func despawn_unit(index : int) -> void:
-	print(index)
-	scout_indeces.remove(scout_indeces.find(index))
+	index = scout_indeces.find(index)
+	
+	if index != -1:
+		scout_indeces.remove(index)
 
 func add_to_vision(pos : Vector2, radius : int) -> void:
 	if radius == -1:
@@ -120,6 +122,10 @@ func get_action() -> void:
 				
 				current_action = action.MOVE
 			elif current_action == action.MOVE:
+				if scout_indeces.size() == 0:
+					current_action = action.END
+					continue
+				
 				update_vision()
 				
 				for scout in scout_indeces:
