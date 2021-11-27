@@ -38,6 +38,7 @@ enum explore_target{
 }
 
 func despawn_unit(index : int) -> void:
+	print(index)
 	index = scout_indeces.find(index)
 	
 	if index != -1:

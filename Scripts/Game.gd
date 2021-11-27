@@ -583,12 +583,14 @@ func remove_units():
 	
 	for index in range(units_to_remove.size()):
 		var s : int = units_to_remove.size()
+		var sz : int = players[player].units.size()
+		
 		players[player].units.remove(units_to_remove[s - index - 1])
 		
 		player_unit[units_to_remove[s - index - 1]].despawn()
 		
 		if players[player].is_bot:
-			players[player].despawn_unit(s - index - 1)
+			players[player].despawn_unit(sz - index - 2)
 			
 		players[player].node.remove_child(player_unit[units_to_remove[s - index - 1]])
 
