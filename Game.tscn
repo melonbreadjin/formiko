@@ -1090,7 +1090,6 @@ cell_size = Vector2( 16, 16 )
 format = 1
 
 [node name="TerritoryMap" type="TileMap" parent="World"]
-visible = false
 self_modulate = Color( 1, 1, 1, 0.25098 )
 scale = Vector2( 8, 8 )
 z_index = 10

@@ -505,19 +505,29 @@ func initiate_combat(pos : Vector2) -> bool:
 			return false
 
 func drop_unit(pos : Vector2, dist : int) -> void:
-	if unit_drag_position.distance_to(unit_drop_position) > unit_drag_instance.movement:
-		var point : Vector2 = lerp(unit_drop_position, unit_drag_position, unit_drag_instance.movement / unit_drag_position.distance_to(unit_drop_position))
+	if unit_drag_position.distance_to(pos) > unit_drag_instance.movement:
+		print(unit_drag_position, " ", pos, " ", unit_drag_instance.movement)
+		for _count in range(unit_drag_instance.movement - 1):
+			var dx : int = int(abs(pos.x - unit_drag_position.x))
+			var dy : int = int(abs(pos.y - unit_drag_position.y))
+			pos = unit_drag_position
+			
+			if dx > dy:
+				pos.x = pos.x + (1 if unit_drag_position.x < pos.x else -1)
+				dx -= 1
+			else:
+				pos.y = pos.y + (1 if unit_drag_position.y < pos.y else -1)
+				dy -= 1
+		print(unit_drag_position)
 		
-		unit_drop_position = Vector2(int(point.x), int(point.y))
-	else:
-		unit_drop_position = pos
+	unit_drop_position = pos
 	
-	if initiate_combat(pos):
-		tilemap_territory.set_cellv(pos, tileset_territory.find_tile_by_name("%d" % active_player))
+	if initiate_combat(unit_drop_position):
+		tilemap_territory.set_cellv(unit_drop_position, tileset_territory.find_tile_by_name("%d" % active_player))
 		
 		if active_player == 0:
-			clear_fog(int(pos.x), int(pos.y), unit_drag_instance.base_vision[unit_drag_instance.unit_type], true)
-			create_fog(int(unit_drag_position.x), int(unit_drag_position.y), int(pos.x), int(pos.y), unit_drag_instance.base_vision[unit_drag_instance.unit_type])
+			clear_fog(int(unit_drop_position.x), int(unit_drop_position.y), unit_drag_instance.base_vision[unit_drag_instance.unit_type], true)
+			create_fog(int(unit_drag_position.x), int(unit_drag_position.y), int(unit_drop_position.x), int(unit_drop_position.y), unit_drag_instance.base_vision[unit_drag_instance.unit_type])
 		
 		var new_unit : Unit = Unit.new()
 		
@@ -527,19 +537,19 @@ func drop_unit(pos : Vector2, dist : int) -> void:
 		new_unit.tile_pos = unit_drag_instance.tile_pos
 		
 		if unit_drag_instance.unit_type == Globals.unit_type.ANT_QUEEN:
-			players[active_player].queen_position = pos
+			players[active_player].queen_position = unit_drop_position
 		
 		for unit_handler in unit_map.data[unit_drag_position.y][unit_drag_position.x].unit_handler:
 			if unit_handler == unit_drag_handler:
 				unit_map.data[unit_drag_position.y][unit_drag_position.x].remove_unit_from_tile(unit_drag_instance, unit_drag_count)
-				unit_map.data[pos.y][pos.x].add_unit_to_tile(new_unit, unit_drag_count)
+				unit_map.data[unit_drop_position.y][unit_drop_position.x].add_unit_to_tile(new_unit, unit_drag_count)
 				
 				var player : int = unit_drag_instance.player
 				
 				for index in range(players[player].units.size()):
 					if unit_drag_count > 0:
 						if players[player].units[index].unit_type == unit_drag_instance.unit_type and players[player].units[index].movement == unit_drag_instance.movement and players[player].units[index].tile_pos == unit_drag_position:
-							players[player].units[index].reposition(pos)
+							players[player].units[index].reposition(unit_drop_position)
 							players[player].units[index].movement -= dist
 							
 							unit_drag_count -= 1

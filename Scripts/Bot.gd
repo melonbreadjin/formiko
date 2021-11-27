@@ -38,8 +38,8 @@ enum explore_target{
 }
 
 func despawn_unit(index : int) -> void:
-	if index in scout_indeces:
-		scout_indeces.remove(scout_indeces.find(index))
+	print(index)
+	scout_indeces.remove(scout_indeces.find(index))
 
 func add_to_vision(pos : Vector2, radius : int) -> void:
 	if radius == -1:
@@ -96,8 +96,6 @@ func update_desire_scout_count() -> void:
 func get_action() -> void:
 	current_action = action.START
 	
-	print(resources[Globals.resource.FOOD])
-	
 	if current_goal == goal.EXPLORE:
 		while current_action != action.END:
 			if current_action == action.START:
@@ -132,9 +130,10 @@ func get_action() -> void:
 					
 					vision.shuffle()
 					
-					while not explore_target_found:
+					while not explore_target_found or scout_ring_size < max(Globals.world_size.x, Globals.world_size.y) / 2:
 						if explored_tiles.size() >= Globals.world_size.x * Globals.world_size.y:
 							current_action = action.END
+							scout_target = queen_position
 							break
 						
 						scout_ring = get_ring(units[scout].tile_pos, scout_ring_size)
@@ -193,7 +192,24 @@ func get_action() -> void:
 					if target_tile != Vector2(-1, -1):
 						Globals.emit_signal("bot_move_unit", unit, [unit.unit_type, unit.movement], 1, unit.tile_pos, target_tile)
 			
-			current_action = action.END
+			current_action = action.SPAWN
+		elif current_action == action.SPAWN:
+			for unit in units:
+				if unit.unit_type == Globals.unit_type.ANT_QUEEN:
+					var ring = get_ring(unit.tile_pos, unit.base_vision[unit.unit_type])
+					var max_yield : float = yield_map[unit.tile_pos.y][unit.tile_pos.x].yields[Globals.resource.FOOD]
+					var target_tile : Vector2 = Vector2(-1, -1)
+					
+					for tile in ring:
+						var tile_yield : float = yield_map[tile.y][tile.x].yields[Globals.resource.FOOD]
+						
+						if tile_yield > max_yield:
+							max_yield = tile_yield
+							target_tile = tile
+						
+					if target_tile != Vector2(-1, -1):
+						Globals.emit_signal("bot_move_unit", unit, [unit.unit_type, unit.movement], 1, unit.tile_pos, target_tile)
+					
 
 func get_area(pos : Vector2, size : int) -> Array:
 	var area : Array = []
